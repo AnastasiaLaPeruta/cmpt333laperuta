@@ -1,1 +1,162 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CMPT 333
+% Lab One
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from: http://www.LaTeXTemplates.com
+% Original author: % Frits Wenneker (http://www.howtotex.com)
+% License: CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% Modified by Alan G. Labouseur  - alan@labouseur.com
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper, 10pt]{article} 
+
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{graphicx}
+\usepackage[lined,linesnumbered,commentsnumbered]{algorithm2e}
+\usepackage{listings}
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\usepackage{lastpage}
+\usepackage{url}
+
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{page \thepage\ of \pageref{LastPage}} % Page numbering for center footer
+\fancyfoot[R]{}
+
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+   \normalfont \normalsize 
+   \textsc{CMPT 333 - Fall 2023 - Dr. Labouseur} \\[12pt] % Header stuff.
+   \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
+   \huge Lab One:  Erlang Questions \\     	    % Assignment title
+   \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
+}
+
+\author{Anastasia LaPeruta \\ \normalsize Anastasia.Laperuta1@marist.edu}
+
+\date{\normalsize\today} 	% Today's date.
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%   CONTENT SECTION
+%----------------------------------------------------------------------------------------
+
+% - -- -  - -- -  - -- -  -
+
+\section{What is single assignment? }
+
+Single assignment means that within an environment, variables can only be \\
+bound to a single value that cannot change.  \\
+
+\section{What’s	the	difference	between	a	{\it bound}	and	{\it unbound}	variable? }
+
+A bound variable is one that has a value attached to it, while an unbound variable is one that no value attached to it.  
+\\
+
+\section{How does variable scope work in the Erlang	environment? }
+
+In the Erlang environment a variable's scope is local rather than global, meaning that it cannot be accessed outside of the function it is in.
+\\
+
+\section{Does Erlang implement mutable or immutable	memory state? Why? }
+
+Erlang implements an immutable memory state because within its environment once a value is bound to a variable it remains bound to it.
+\\
+
+\section{Describe Erlang’s memory management system. }
+
+Erlang uses a real-time garbage collector. Memory is allocated automatically when needed and taken away when it no longer has a use (Armstrong et al., n.d.). 
+\\
+
+\section{What does “Erlang”	mean or	stand for, if anything? }
+
+Erlang is named after Danish mathematician Agner Krarup Erlang. A man who had ties to the telephony industry that the language originated from \\(Armstrong, n.d.).
+\\
+
+\section{Contrast “soft	real time” from	“hard real time”. }
+
+"Soft real-time" is best effort within a certain time frame, while "hard real time" is guaranteed.
+\\
+
+\section{Why is Erlang so well suited for concurrency-oriented programming? }
+
+Erlang is so well suited for concurrency-oriented programming because we do not have to worry about variables changing values.
+\\
+
+\section{Explain Erlang’s “let it crash” philosophy. }
+
+Erlang handles errors remotely, not locally (Armstrong and Markus 22:35). \\
+Erlang does not catch any exceptions because it is a waste of resources.
+\\
+
+\section{What’s	the	difference between a tuple and a list? }
+
+A tuple is used to store "a fixed number of items into a single entity," while a list is used to store "an arbitrary number of things" (Armstrong, 2013),
+\\
+
+\section{What’s	BEAM?}
+
+BEAM is the Erlang virtual machine that compiles code in the Erlang Runtime System (Högberg, 2020).
+\\
+
+\section{How can it	be that	we can create more Erlang “processes” than are allowed for in	
+the	operating system?}
+
+All processes contain multiple threads within each individual process. In general, many threads per process allows Erlang more processes than cores.
+\\
+
+\newpage
+\title{	
+   \normalfont \normalsize 
+   \huge \centering        Works Cited \newline\\     	    %  title
+
+}
+
+
+    \hspace*{1.5em}  Armstrong, Joe. "A History of Erlang." 2007, {\it https://www.labouseur.com/
+    \noindent courses/erlang/history-of-erlang-armstrong.pdf}.\\
+ \newline\\
+
+\hspace*{1.5em}  Armstrong, Joe. {\it Programming Erlang, Second Edition:
+Software for a Concurrent World}. Pragmatic Programmers, LLC., 2013.\\
+ \newline\\
+
+ \hspace*{1.5em}  Armstrong, Joe. et al. {\it Concurrent Programming in ERLANG: Second Edition}."  New Jersey: Prentice Hall, n.d.\\
+ \newline\\
+
+\hspace*{1.5em}  Högberg, John. "A brief introduction to BEAM." {\it ERLANG}, Oct, 20, 2020. {\it https://www.erlang.org/blog/a-brief-beam-primer/.}\\
+ \newline\\
+
+
+ \hspace*{1.5em}  Markus. "Episode 89: Joe Armstrong on Erlang." {\it Software Engineering Radio}, Armstrong, Joe, Bernd, Mar. 12, 2008. {\it http://www.se-radio.net/2008/03/episode-89-joe-armstrong-on-erlang/.}\\
+ \newline\\
+
+
+\end{document}
 
