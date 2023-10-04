@@ -4,42 +4,34 @@
 %
 
 -module(lab_two).
--export([list_of_lists/3]).
-
-
-list() -> [].
-
-list_of_lists(0,Num_elements,Value_inc) -> io:fwrite("also working"); % goes first so it catches base case of 0
-list_of_lists(Num_lists, Num_elements, Value_inc) -> 
-    list()++[list_of_lists(Num_lists-1, Num_elements, Value_inc)]. %subtract 1 each time with recursion, was [Num_lists] b4
+-export([list_of_lists/2]).
 
 
 %
 % -- Public -- 
 %
 
-%listoflists(valueInc,numLists,numElements) -> makeSmallerList(valueInc,numLists,numElements),
-%listoflists(valueInc,numLists-1,numElements);
-%listoflists(_,0,_) -> io:fwrite("~w",[finalList]). % base case
+% case for when input is non-negative
+list_of_lists(Seq_length,Number) when Seq_length > 0, Number > 0 ->
+    list_of_lists(Seq_length, Number, [], Number).
+
+% reverses list since elements are prepended
+list_of_lists(_,_,Result,0) ->
+    lists:reverse(Result);
+% calls private function to generate each inner list
+list_of_lists(Seq_length,Number,Result,Counter) when Counter > 0 ->
+    Inner_list = inner_list(Seq_length, Number, Counter, Seq_length),
+    list_of_lists(Seq_length, Number, [Inner_list|Result], Counter - 1).
+
 
 %
-% -- Private --
+% -- Private--
 %
 
-%newList(valueInc,numLists,numElements) -> [].
-%increasingNum() -> numLists.
-%makeSmallerList(valueInc,numLists,numElements) -> newList(valueInc,numLists,numElements) ++ [increasingNum()],
-%makeSmallerList(valueInc,increasingNum,numElements-1);
-%makeSmallerList(_,_,0) -> newList(valueInc,numLists,numElements). % base case
+inner_list(_, _, 0,_) ->
+    [];
 
-%attempt 2
-
-%list() -> [].
-%listoflists([Head|Tail]) -> determineNum(list) ++ []
-
-
-%determineNum(num) when is_integer(num) -> num + m;
-%determineNum(_) -> io:fwrite("Not a valid value").
-
-
-   
+% once each element is prepended, the list gets reversed
+inner_list(Seq_length,Number,Counter,Start) ->
+    Value = Start - (Counter - 1) * Number,
+    [Value|inner_list(Seq_length,Number,Counter-1,Start)].
