@@ -4,34 +4,38 @@
 %
 
 -module(lab_two).
--export([list_of_lists/2]).
+-export([start_off/2, sm_list/0, big_list/0]).
 
 
 %
 % -- Public -- 
 %
 
-% case for when input is non-negative
-list_of_lists(Seq_length,Number) when Seq_length > 0, Number > 0 ->
-    list_of_lists(Seq_length, Number, [], Number).
+% sets up empty lists for inner and entire list so we can add to it as we go
+sm_list()-> [].
+big_list() -> [].
 
-% reverses list since elements are prepended
-list_of_lists(_,_,Result,0) ->
-    lists:reverse(Result);
-% calls private function to generate each inner list
-list_of_lists(Seq_length,Number,Result,Counter) when Counter > 0 ->
-    Inner_list = inner_list(Seq_length, Number, Counter, Seq_length),
-    list_of_lists(Seq_length, Number, [Inner_list|Result], Counter - 1).
+% this public function is meant to grab straightforward information and start up our private functions
+% which will do all the heavy lifting
+start_off(Counter, Element) -> 
+
+    % assigns variables that will be passed to the recursive function 
+    Start_num = Counter, 
+    sm_list() ++ [Start_num], % adds starting number before it gets to function that will increment it
+    inner_list(sm_list, Start_num, Counter, Element). % starts recursive call for inner list
+
 
 
 %
 % -- Private--
 %
 
-inner_list(_, _, 0,_) ->
-    [];
+inner_list(_,_,_,0) -> final_list(sm_list, Start_num - 1, Counter); % base case for when elements of list have all been inserted
 
-% once each element is prepended, the list gets reversed
-inner_list(Seq_length,Number,Counter,Start) ->
-    Value = Start - (Counter - 1) * Number,
-    [Value|inner_list(Seq_length,Number,Counter-1,Start)].
+% decrease element left by one each time and recursively calls itself to add the next number to the small list
+inner_list(sm_list, Start_num, Counter, Element) -> sm_list() ++ [inner_list(sm_list, Start_num + Counter, Counter, Element - 1)].
+
+
+% recursive function that will add all of the smaller lists into one large one
+final_list(sm_list, 0, Counter) -> io:fwrite(big_list() ++ [sm_list],"~w"); % base case for when the correct amount of lists has been added
+final_list(sm_list, Start_num, Counter) -> io:fwrite("This second one works").
