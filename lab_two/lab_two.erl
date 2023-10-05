@@ -17,11 +17,17 @@ big_list() -> [].
 
 % this public function is meant to grab straightforward information and start up our private functions
 % which will do all the heavy lifting
-start_off(Counter, Element) -> 
+start_off(Counter, Element) when is_integer(Counter), Counter > -1, is_integer(Element), Element > -1 -> % runs only for non-negative integer input
     % assigns variables that will be passed to the recursive function 
     Default = Element, % allows final_list to access to reset
     Start_num = Counter, 
-    inner_list(sm_list() ++ [Start_num], Start_num, Counter, Element, Default). % starts recursive call for inner list
+
+    inner_list(sm_list() ++ [Start_num], Start_num, Counter, Element, Default); % starts recursive call for inner list
+
+
+start_off(_,_) ->
+    {error, invalid_input}. %if input is bad
+
 
 
 
