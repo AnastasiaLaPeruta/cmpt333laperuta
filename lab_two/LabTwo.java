@@ -25,7 +25,7 @@ public class LabTwo {
             }
         }
         catch(Exception e){
-            System.out.println("Input must be an integer.");
+            System.out.println("Input must be 3 integers.");
             System.exit(0);
         }  
     }

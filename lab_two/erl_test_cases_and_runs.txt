@@ -1,0 +1,23 @@
+Test cases: 
+
+lab_two:start_off(4,16).
+lab_two:start_off(3,4).
+lab_two:start_off(3,q).
+lab_two:start_off(3,-4).
+lab_two:start_off(/,ae).
+
+Successful runs (expected data):
+
+lab_two:start_off(3,4).
+** exception error: no function clause matching lab_two:inner_list([3],3,3,4,4) (lab_two.erl, line 38)
+
+lab_two:start_off(4,16).
+** exception error: no function clause matching lab_two:inner_list([4],4,4,16,16) (lab_two.erl, line 38)
+
+Successful runs (unexpected data):
+
+lab_two:start_off(4,-4).
+{error,invalid_input}
+
+lab_two:start_off(y,9).
+{error,invalid_input}
