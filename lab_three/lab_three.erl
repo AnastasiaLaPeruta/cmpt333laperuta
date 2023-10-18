@@ -18,7 +18,16 @@ gameLoop() ->
                             gameLoop();
 
      {FromPid, 2, L}     -> io:format("~p is standing along the edge of the Hudson River and falls in. Current inventory includes ~w.~n", [FromPid, L]),
-                            gameLoop();                     
+                            gameLoop();           
+
+     {FromPid, 3, L}     -> io:format("~p is stranded on top of the Dyson Center construction site. Current inventory includes ~w.~n", [FromPid, L]),
+                            gameLoop();    
+
+     {FromPid, 4, L}     -> io:format("~p is sitting in the Cannavino Library carrying ~w.~n", [FromPid, L]),
+                            gameLoop();    
+
+     {FromPid, 5, L}     -> io:format("~p is in the dining hall carrying ~w.~n", [FromPid, L]),
+                            gameLoop();                                                                             
 
      {FromPid, Other, L} -> io:format("~p is lost in unknown locale: ~p. Perhaps one of these items will help:~w.~n", [FromPid, Other, L]),
                             gameLoop()
