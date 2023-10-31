@@ -4,7 +4,6 @@
 -author('Anastasia M. LaPeruta').
 -define(else, true).  % -- This is to make the if statements (somewhat) readable.
 
-% TODO: Add to inventory by visiting locales.
 %       Increase score by visiting locales.
 %       Show ratio of score to turns at the end of the game.
 %       Move more of the gameplay logic into the server.
@@ -25,8 +24,9 @@ start() ->
    {_NewLocale, Description} = processCommand(-1, "north", ServerPid, []),
    io:fwrite("~n~s~n~n", [Description]),
 
-   % -- Kick off the game loop with the ServerPID, location = 0, and turn count = 1.
-   gameLoop(ServerPid, 0, 1, 0, []).
+   % -- Kick off the game loop with the ServerPID, location = 0, and turn count = 1, 
+   % score at 120 since least possible moves to win would end up at score of 100 if descrease by 10 each time.
+   gameLoop(ServerPid, 0, 1, 120, []).
 
 
 %---------
@@ -50,7 +50,7 @@ gameLoop(ServerPid, CurrentLocale, TurnCount, Score, InventoryList) ->
    if (NewLocale < 0) ->
      io:fwrite("Goodbye.~n",[]);
    ?else ->
-     gameLoop(ServerPid, NewLocale, TurnCount+1, Score, lists:append(InventoryList,locationItems(NewLocale)))  % This is tail recursion,
+     gameLoop(ServerPid, NewLocale, TurnCount+1, Score-10, lists:append(InventoryList,locationItems(NewLocale)))  % This is tail recursion,
    end. % if                                                            % so it's really a jump to the top of gameLoop.
 
 
@@ -117,7 +117,7 @@ serverLoop() ->
    end.
 
 
-% Mapper. Double-chcek with showMap().
+% Mapper. Double-check with showMap().
 mapper(-1, north) -> 0; 
 mapper( 0, west)  -> 1;
 mapper( 0, east)  -> 5;
