@@ -33,7 +33,12 @@ start() ->
 gameLoop(ServerPid, CurrentLocale, TurnCount, Score, InventoryList) ->
    % -- Show the map and get input from the player.
    io:fwrite("~s", [showMap(CurrentLocale)]),
-   io:fwrite("~nScore=~w  Turn ~w ] ", [Score, TurnCount]),
+   % doesn't let score fall below 0
+   if (Score >= 0) ->
+      io:fwrite("~nScore=~w  Turn ~w ] ", [Score, TurnCount]);
+   ?else ->
+      io:fwrite("~nScore=~w  Turn ~w ] ", [0, TurnCount])
+   end,
    {ok, Input} = io:fread("Enter a command (or help) -] ", "~s"),  % Input gets returned as a list from io:fread.
    [Command | _] = Input,   % (Because Input is a list.)
    %
