@@ -50,7 +50,7 @@ gameLoop(ServerPid, CurrentLocale, TurnCount, Score, InventoryList) ->
    if (NewLocale < 0) ->
      io:fwrite("Goodbye.~n",[]);
    ?else ->
-     gameLoop(ServerPid, NewLocale, TurnCount+1, Score, InventoryList)  % This is tail recursion,
+     gameLoop(ServerPid, NewLocale, TurnCount+1, Score, lists:append(InventoryList,locationItems(NewLocale)))  % This is tail recursion,
    end. % if                                                            % so it's really a jump to the top of gameLoop.
 
 
@@ -119,31 +119,30 @@ serverLoop() ->
 
 % Mapper. Double-chcek with showMap().
 mapper(-1, north) -> 0; 
-mapper( 0, north) -> 6;
-mapper( 0, south) -> 3;
 mapper( 0, west)  -> 1;
 mapper( 0, east)  -> 5;
 mapper( 1, south) -> 2;
 mapper( 1, east)  -> 0;
-mapper( 2, north) -> 1;
 mapper( 2, east)  -> 3;
+mapper( 2, north) -> 1;
+mapper( 3, east)  -> 4;
 mapper( 3, west)  -> 2;
 mapper( 3, north) -> 0;
-mapper( 3, east)  -> 4;
 mapper( 4, north) -> 5;
 mapper( 4, west)  -> 3;
-mapper( 5, west)  -> 0;
+mapper( 5, north) -> 6;
 mapper( 5, south) -> 4;
-mapper( 6, south) -> 0;
+mapper( 5, west)  -> 0;
+mapper( 6, south) -> 5;
 mapper( _, _)     ->-1.
 
 
 % Show map. Double-check with mapper().
 showMap(CurrentLocale) ->
    io_lib:format("................... ~n",    []) ++
-   io_lib:format("........ ~s ........ ~n",   [dispLocale(CurrentLocale, 6)]) ++
-   io_lib:format("........ | ........ ~n",    []) ++
-   io_lib:format("........ | ........ ~n",    []) ++
+   io_lib:format(".............. ~s .. ~n",   [dispLocale(CurrentLocale, 6)]) ++
+   io_lib:format(".............. | .. ~n",    []) ++
+   io_lib:format(".............. | .. ~n",    []) ++
    io_lib:format(".. ~s --- ~s --- ~s .. ~n", [dispLocale(CurrentLocale, 1), dispLocale(CurrentLocale, 0), dispLocale(CurrentLocale, 5)]) ++
    io_lib:format(".. |.... | ... | .. ~n",    []) ++
    io_lib:format(".. |.... | ... | .. ~n",    []) ++
@@ -167,7 +166,7 @@ locationDesc(2)   -> io_lib:format("2. California~nUsually sunny and clear skies
 locationDesc(3)   -> io_lib:format("3. Texas~nMassive tornadoes rip through the state, each a mile wide.", []);
 locationDesc(4)   -> io_lib:format("4. Florida~nYou are in Miami where a tsunami threatens the coast.", []);
 locationDesc(5)   -> io_lib:format("5. North Carolina~nYou are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []);
-locationDesc(6)   -> io_lib:format("6. Canadian Border~nCanada always seems like a safer option...too bad they won't let you cross the border without a passport.", []);
+locationDesc(6)   -> io_lib:format("6. Canadian Border~nYou successfully escaped to Canada.", []);
 locationDesc(Loc) -> io_lib:format("Oops! Unknown locale: ~w.", [Loc]).
 
 
@@ -185,7 +184,7 @@ locationItems(_Loc) -> [].  % TODO: throw exception due to the invalid location 
 % Other Commands
 
 showInventory([])            -> io_lib:format("You are not carrying anything of use.", []);
-showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [InventoryList]).
+showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [lists:usort(InventoryList)]).
 
 
 itsPitchDark() -> io_lib:format("You are likely to be eaten by a grue. ~n",         []) ++
