@@ -1,0 +1,259 @@
+TEST CASES:
+
+Score=120  Turn 1 ] Enter a command (or help) -] -2
+
+I do not understand.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- @ --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=110  Turn 2 ] Enter a command (or help) -] //
+
+I do not understand.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- @ --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=100  Turn 3 ] Enter a command (or help) -] northwest
+
+I do not understand.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- @ --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+
+
+
+
+
+TRANSCRIPT:
+
+lab_three:start().
+Starting AG server.
+You are on a road trip across the US when natural disasters break loose across all fifty states. Do your best to say safe.
+
+0. South Dakota
+Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick! You see [brochure,pocketknife] scattered around.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- @ --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=120  Turn 1 ] Enter a command (or help) -] w
+
+1. Las Vegas, Nevada
+You decide to take a break at the casino when the building begins to flood. You see [loose_change,keys] scattered around.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. @ --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=110  Turn 2 ] Enter a command (or help) -] s
+
+2. California
+Usually sunny and clear skies, a wildfire creates clouds of smoke that cause low visibility. You see [water_bottle] scattered around.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. @ --- 3 --- 4 .. 
+................... 
+
+Score=100  Turn 3 ] Enter a command (or help) -] i
+
+You are carrying [keys,loose_change,water_bottle].
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. @ --- 3 --- 4 .. 
+................... 
+
+Score=90  Turn 4 ] Enter a command (or help) -] help
+
+You can enter compass directions: [n] or [north], [s] or [south], [e] or [east], [w] or [west], as well as [quit], [look], [help], [map], [inventory], and other commands.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. @ --- 3 --- 4 .. 
+................... 
+
+Score=80  Turn 5 ] Enter a command (or help) -] map
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. @ --- 3 --- 4 .. 
+................... 
+
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. @ --- 3 --- 4 .. 
+................... 
+
+Score=70  Turn 6 ] Enter a command (or help) -] n
+
+1. Las Vegas, Nevada
+You decide to take a break at the casino when the building begins to flood. You see [loose_change,keys] scattered around.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. @ --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=60  Turn 7 ] Enter a command (or help) -] s
+
+2. California
+Usually sunny and clear skies, a wildfire creates clouds of smoke that cause low visibility. You see [water_bottle] scattered around.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. @ --- 3 --- 4 .. 
+................... 
+
+Score=50  Turn 8 ] Enter a command (or help) -] e
+
+3. Texas
+Massive tornadoes rip through the state, each a mile wide. You see [] scattered around.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+Score=40  Turn 9 ] Enter a command (or help) -] e
+
+4. Florida
+You are in Miami where a tsunami threatens the coast. You see [swimsuit] scattered around.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- @ .. 
+................... 
+
+Score=30  Turn 10 ] Enter a command (or help) -] n
+
+5. North Carolina
+You are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean. You see [compass] scattered around.
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- @ .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=20  Turn 11 ] Enter a command (or help) -] i
+
+You are carrying [compass,keys,loose_change,swimsuit,water_bottle].
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- @ .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=10  Turn 12 ] Enter a command (or help) -] n
+
+6. Canadian Border
+You successfully escaped to Canada. You see [souveneir_hockey_puck] scattered around.
+
+................... 
+.............. @ .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=0  Turn 13 ] Enter a command (or help) -] q
+
+Thank you for playing.
+
+Goodbye.
+ok
