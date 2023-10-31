@@ -4,9 +4,6 @@
 -author('Anastasia M. LaPeruta').
 -define(else, true).  % -- This is to make the if statements (somewhat) readable.
 
-%       Increase score by visiting locales.
-%       Show ratio of score to turns at the end of the game.
-%       Move more of the gameplay logic into the server.
 
 -type direction() :: north | south | east | west.
 
@@ -178,8 +175,7 @@ locationItems(3)    -> [];
 locationItems(4)    -> [swimsuit];
 locationItems(5)    -> [compass];
 locationItems(6)    -> [souveneir_hockey_puck];
-locationItems(_Loc) -> [].  % TODO: throw exception due to the invalid location value.
-
+locationItems(_Loc) -> [].
 
 % Other Commands
 
