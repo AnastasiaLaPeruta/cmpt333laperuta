@@ -47,13 +47,17 @@ gameLoop(ServerPid, CurrentLocale, TurnCount, Score, InventoryList) ->
    %
    % -- Update the display.
    io:fwrite("~n~s~n~n", [Description]),
-   %
+
    % -- Quit or Recurse/Loop.
    if (NewLocale < 0) ->
      io:fwrite("Goodbye.~n",[]);
    ?else ->
-     gameLoop(ServerPid, NewLocale, TurnCount+1, Score-10, lists:append(InventoryList,locationItems(NewLocale)))  % This is tail recursion,
-   end. % if                                                            % so it's really a jump to the top of gameLoop.
+      if (NewLocale == 3) ->
+         gameLoop(ServerPid, NewLocale, TurnCount+1, Score+20, lists:append(InventoryList,locationItems(NewLocale)));  % This is tail recursion,
+      ?else ->
+         gameLoop(ServerPid, NewLocale, TurnCount+1, Score-10, lists:append(InventoryList,locationItems(NewLocale)))
+      end
+   end.                                                                                                               % so it's really a jump to the top of gameLoop.
 
 
 processCommand(CurrentLocale, Command, ServerPid, Inventory) ->
@@ -68,16 +72,16 @@ processCommand(CurrentLocale, Command, ServerPid, Inventory) ->
       "west"  -> move(ServerPid, {CurrentLocale, west});
       "w"     -> move(ServerPid, {CurrentLocale, west});
       % -- Other commands - Handle non-movement commands.
-      "quit"      -> {-1, "Thank you for playing."};
-      "q"         -> {-1, "Thank you for playing."};
-      "look"      -> {CurrentLocale, locationDesc(CurrentLocale)};
-      "l"         -> {CurrentLocale, locationDesc(CurrentLocale)};
-      "help"      -> {CurrentLocale, helpText()};
-      "sing"      -> {CurrentLocale, itsPitchDark()};
-      "map"       -> {CurrentLocale, showMap(CurrentLocale)};
-      "show map"  -> {CurrentLocale, showMap(CurrentLocale)};
-      "inventory" -> {CurrentLocale, showInventory(Inventory)};
-      "i"         -> {CurrentLocale, showInventory(Inventory)};
+      "quit"          -> {-1, "Thank you for playing."};
+      "q"             -> {-1, "Thank you for playing."};
+      "look"          -> {CurrentLocale, locationDesc(CurrentLocale)};
+      "l"             -> {CurrentLocale, locationDesc(CurrentLocale)};
+      "h"          -> {CurrentLocale, helpText()};
+      "help"          -> {CurrentLocale, helpText()};
+      "map"           -> {CurrentLocale, showMap(CurrentLocale)};
+      "show map"      -> {CurrentLocale, showMap(CurrentLocale)};
+      "inventory"     -> {CurrentLocale, showInventory(Inventory)};
+      "i"             -> {CurrentLocale, showInventory(Inventory)};
       % -- Otherwise...
       _Else   -> {CurrentLocale, "I do not understand."}  % Starting _Else with "_" prevents the "unused" warning.
    end.
@@ -123,6 +127,7 @@ serverLoop() ->
 mapper(-1, north) -> 0; 
 mapper( 0, west)  -> 1;
 mapper( 0, east)  -> 5;
+mapper( 0, south) -> 3;
 mapper( 1, south) -> 2;
 mapper( 1, east)  -> 0;
 mapper( 2, east)  -> 3;
@@ -165,7 +170,7 @@ dispLocale(CurrentLocale, MapLoc) ->
 locationDesc(0)   -> io_lib:format("0. South Dakota~nHome of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!", []);
 locationDesc(1)   -> io_lib:format("1. Las Vegas, Nevada~nYou decide to take a break at the casino when the building begins to flood.", []);
 locationDesc(2)   -> io_lib:format("2. California~nUsually sunny and clear skies, a wildfire creates clouds of smoke that cause low visibility.", []);
-locationDesc(3)   -> io_lib:format("3. Texas~nMassive tornadoes rip through the state, each a mile wide.", []);
+locationDesc(3)   -> io_lib:format("3. Texas~nYou have been given 20 bonus points! Unfortunately, massive tornadoes rip through the state, each a mile wide and you must evacuate.", []);
 locationDesc(4)   -> io_lib:format("4. Florida~nYou are in Miami where a tsunami threatens the coast.", []);
 locationDesc(5)   -> io_lib:format("5. North Carolina~nYou are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []);
 locationDesc(6)   -> io_lib:format("6. Canadian Border~nYou successfully escaped to Canada.", []);
@@ -188,9 +193,3 @@ showInventory([])            -> io_lib:format("You are not carrying anything of 
 showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [lists:usort(InventoryList)]).
 
 
-itsPitchDark() -> io_lib:format("You are likely to be eaten by a grue. ~n",         []) ++
-                  io_lib:format("If this predicament seems particularly cruel, ~n", []) ++
-                  io_lib:format("consider whose fault it could be: ~n",             []) ++
-                  io_lib:format("not a torch or a match in your inventory. ~n",     []) ++
-                  io_lib:format("                              - MC Frontalot~n",   []) ++
-                  io_lib:format(" https://www.youtube.com/watch?v=4nigRT2KmCE",     []).
