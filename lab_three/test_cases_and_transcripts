@@ -224,7 +224,8 @@ You are carrying [brochure,compass,keys,loose_change,pocketknife,water_bottle].
 Score=50  Turn 11 ] Enter a command (or help) -] n
 
 6. Canadian Border
-You successfully escaped to Canada. You see [souveneir_hockey_puck] scattered around.
+You successfully escaped to Canada. GAME OVER.
+ok
 
 ................... 
 .............. @ .. 
@@ -233,12 +234,7 @@ You successfully escaped to Canada. You see [souveneir_hockey_puck] scattered ar
 .. 1 --- 0 --- 5 .. 
 .. |.... | ... | .. 
 .. |.... | ... | .. 
-.. 2 --- 3 --- 4 .. 
+.. 2 --- 3 --- 4 ..  
 ................... 
 
-Score=40  Turn 12 ] Enter a command (or help) -] q
-
-Thank you for playing.
-
-Goodbye.
-ok
+Score=40  Turn 12 ] Enter a command (or help) -] @AnastasiaLaPeruta ➜ /workspaces/cmpt333laperuta (main) $
