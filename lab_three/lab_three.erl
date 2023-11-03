@@ -106,11 +106,20 @@ serverLoop() ->
       {FromPid, {CurrentLocale, Direction}} ->
          NewLocaleNumber = mapper(CurrentLocale, Direction),
          if NewLocaleNumber > -1 ->
-            % Valid move.
-            NewLocaleDesciption = locationDesc(NewLocaleNumber),
-            NewLocaleItems      = locationItems(NewLocaleNumber),
-            FromPid ! {self(), {NewLocaleNumber, io_lib:format("~s You see ~w scattered around.", [NewLocaleDesciption, NewLocaleItems])}},
-            serverLoop();
+            % ends game if reached
+            if NewLocaleNumber == 6 ->
+               % Valid move.
+               NewLocaleDesciption = locationDesc(NewLocaleNumber),
+               NewLocaleItems      = locationItems(NewLocaleNumber),
+               FromPid ! {self(), {NewLocaleNumber, io:format(" GAME OVER.")}},
+               init:stop();
+            ?else ->
+               % Valid move.
+               NewLocaleDesciption = locationDesc(NewLocaleNumber),
+               NewLocaleItems      = locationItems(NewLocaleNumber),
+               FromPid ! {self(), {NewLocaleNumber, io_lib:format("~s You see ~w scattered around.", [NewLocaleDesciption, NewLocaleItems])}},
+               serverLoop()
+            end;
          ?else ->
             % Invalid move.
             FromPid ! {self(), {CurrentLocale, "You cannot go that way."}},
@@ -173,7 +182,7 @@ locationDesc(2)   -> io_lib:format("2. California~nUsually sunny and clear skies
 locationDesc(3)   -> io_lib:format("3. Texas~nYou have been given 20 bonus points! Unfortunately, massive tornadoes rip through the state, each a mile wide and you must evacuate.", []);
 locationDesc(4)   -> io_lib:format("4. Florida~nYou are in Miami where a tsunami threatens the coast.", []);
 locationDesc(5)   -> io_lib:format("5. North Carolina~nYou are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []);
-locationDesc(6)   -> io_lib:format("6. Canadian Border~nYou successfully escaped to Canada.", []);
+locationDesc(6)   -> io:format("6. Canadian Border~nYou successfully escaped to Canada.");
 locationDesc(Loc) -> io_lib:format("Oops! Unknown locale: ~w.", [Loc]).
 
 
@@ -184,7 +193,7 @@ locationItems(2)    -> [water_bottle];
 locationItems(3)    -> [];
 locationItems(4)    -> [swimsuit];
 locationItems(5)    -> [compass];
-locationItems(6)    -> [souveneir_hockey_puck];
+locationItems(6)    -> [];
 locationItems(_Loc) -> [].
 
 % Other Commands
