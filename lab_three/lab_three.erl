@@ -53,11 +53,13 @@ gameLoop(ServerPid, CurrentLocale, TurnCount, Score, InventoryList) ->
      io:fwrite("Goodbye.~n",[]);
    ?else ->
       if (NewLocale == 3) ->
-         gameLoop(ServerPid, NewLocale, TurnCount+1, Score+20, lists:append(InventoryList,locationItems(NewLocale)));  % This is tail recursion,
+         % adds the 20 point bonus when location 3 is reached
+         gameLoop(ServerPid, NewLocale, TurnCount+1, Score+20, lists:append(InventoryList,locationItems(NewLocale)));  % This is tail recursion, so it's really a jump to the top of gameLoop.
+         % otherwise keeps decreasing score by 10 each move
       ?else ->
          gameLoop(ServerPid, NewLocale, TurnCount+1, Score-10, lists:append(InventoryList,locationItems(NewLocale)))
       end
-   end.                                                                                                               % so it's really a jump to the top of gameLoop.
+   end.                                                                                                               
 
 
 processCommand(CurrentLocale, Command, ServerPid, Inventory) ->
@@ -182,7 +184,7 @@ locationDesc(2)   -> io_lib:format("2. California~nUsually sunny and clear skies
 locationDesc(3)   -> io_lib:format("3. Texas~nYou have been given 20 bonus points! Unfortunately, massive tornadoes rip through the state, each a mile wide and you must evacuate.", []);
 locationDesc(4)   -> io_lib:format("4. Florida~nYou are in Miami where a tsunami threatens the coast.", []);
 locationDesc(5)   -> io_lib:format("5. North Carolina~nYou are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []);
-locationDesc(6)   -> io:format("6. Canadian Border~nYou successfully escaped to Canada.");
+locationDesc(6)   -> io:format("6. Canadian Border~nYou successfully escaped to Canada."); % doesn't display items scattered
 locationDesc(Loc) -> io_lib:format("Oops! Unknown locale: ~w.", [Loc]).
 
 
