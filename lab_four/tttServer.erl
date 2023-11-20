@@ -73,7 +73,23 @@ processPlayerMove(Position, Board) ->
       Board
    end. % if
 
-replaceInList(Value, Position, List) ->
-   {Part1, Part2} = lists:split(Position-1, List),     % Break the list in two just before the specified Position.
-   [_ | Tail] = Part2,                                 % Separate Part2 into Head and Tail, discarding the Head.
-   Part1 ++ [Value] ++ Tail.                           % CONS together the result: Part1 ++ the new Value ++ the Tail from Part2.
+% added this in last, trying to make work
+makeMove(Board) -> io:fwrite("Calculating computer move...", []),
+                   ComputerMove = computeMove(Board),
+                   io:fwrite("Pacing an O into position ~w.~n", [ComputerMove]),
+                   turn(player, replaceInList(-1, ComputerMove, Board)).
+
+computeMove(Board) -> findFirst(0, Board).
+
+findFirst(Target, [Head | Tail]) when (Target == Head) -> 1;                                % This is ugly because if the Target is never found in the list
+findFirst(Target, [Head | Tail]) when (Target /= Head) -> 1 + findFirst(Target, Tail);      % this function will return length(List)+1. At least it's not a
+findFirst(Target, [])                                  -> 1.                                % valid value, but this is NOT a standard convention. -1 would be better.
+
+replaceInList(Value, Position, List) -> {Part1, Part2} = lists:split(Position-1, List),     % Break the list in two just before the specified Position.
+                                        [Head | Tail] = Part2,                              % Separate Part2 into Head and Tail, discarding the Head.
+                                        Part1 ++ [Value] ++ Tail.                           % Cons together the result: Part1 ++ the new Value ++ the Tail from Part2.
+
+%replaceInList(Value, Position, List) ->
+%   {Part1, Part2} = lists:split(Position-1, List),     % Break the list in two just before the specified Position.
+%   [_ | Tail] = Part2,                                 % Separate Part2 into Head and Tail, discarding the Head.
+%   Part1 ++ [Value] ++ Tail.                           % CONS together the result: Part1 ++ the new Value ++ the Tail from Part2.

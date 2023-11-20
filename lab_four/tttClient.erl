@@ -43,7 +43,7 @@ play(ServerNode) ->
 %
 clientLoop() -> receive
                    {FromNode, player_turn, Board} ->
-                      io:fwrite("~sReceived [player_turn] request from node ~w with board ~p.~n",[?id, FromNode, Board]),
+                      io:fwrite("~sReceived [player_turn] request from node ~w with board.~n",[?id, FromNode]),
                       displayBoard(Board),
                       io:fwrite("~s", [?id]),
                       {ok, PlayerMove} = io:fread("Where do you want to move [1-9]? ", "~d"),   % PlayerMove gets read as a list.
@@ -60,4 +60,17 @@ clientLoop() -> receive
 %
 % Private; no messages either.
 %
-displayBoard(Board) -> io:fwrite("Board: ~p~n", [Board]).
+
+% displays board in a nicer format
+displayBoard(Board) -> io:fwrite(" ~s | ~s | ~s ~n", [getDisplay(Board,1), getDisplay(Board,2), getDisplay(Board,3)] ),
+                    io:fwrite("---+---+---~n", []),
+                    io:fwrite(" ~s | ~s | ~s ~n", [getDisplay(Board,4), getDisplay(Board,5), getDisplay(Board,6)] ),
+                    io:fwrite("---+---+---~n", []),
+                    io:fwrite(" ~s | ~s | ~s ~n", [getDisplay(Board,7), getDisplay(Board,8), getDisplay(Board,9)] ).
+
+% used to populate board
+getDisplay(Board,Position) -> case lists:nth(Position, Board) of
+                                -1 -> ["O"];
+                                 0 -> [" "];
+                                 1 -> ["X"]
+                              end.
