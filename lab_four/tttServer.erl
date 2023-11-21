@@ -37,7 +37,7 @@ serverLoop() -> receive
                    {FromNode, start_game} ->
                       io:fwrite("~sReceived [start_game] request from node ~w.~n",[?id, FromNode]),
                       io:fwrite("~sSending [player_turn] response to node ~w.~n",[?id, FromNode]),
-                      InitialBoard = [0,0,0, 0,0,0, 0,0,0],
+                      InitialBoard = [0,0,0, 0,-1,0, 0,0,0], % lets computer go first
                       {tttClient, FromNode} ! {node(), player_turn, InitialBoard},
                       serverLoop();
 
@@ -75,18 +75,92 @@ processPlayerMove(Position, Board) ->
       Board
    end. % if
 
-% added this in last, trying to make work
+
 makeMove(Board) -> io:fwrite("Calculating computer move...", []),
-                   ComputerMove = computeMove(Board),
+                   ComputerMove = computeMove(Board), % index of where computer moves
                    io:fwrite("Placing an O into position ~w.~n", [ComputerMove]),
                    replaceInList(-1, ComputerMove, Board).
                    
+% unfortunately only way to avoid illegal guard error
+computeMove(Board) ->
+   % check to see if top row is almost complete
+   case {lists:nth(3, Board), Board} of
+        {0, [1, 1, _, _, _, _, _, _, _]} -> 3;
+        _ -> 
+            % check to see if the next condition is met
+            case {lists:nth(2, Board), Board} of
+                {0, [1, _, 1, _, _, _, _, _, _]} -> 2;
+                _ -> 
+                    % check to see if the next condition is met
+                    case {lists:nth(1, Board), Board} of
+                        {0, [_, 1, 1, _, _, _, _, _, _]} -> 1;
+                        _ -> 
+                            % check to see if bottom row is almost complete
+                            case {lists:nth(9, Board), Board} of
+                                {0, [_, _, _, _, _, _, 1, 1, _]} -> 9;
+                                _ -> 
+                                    % check to see if the next condition is met
+                                    case {lists:nth(8, Board), Board} of
+                                        {0, [_, _, _, _, _, _, 1, _, 1]} -> 8;
+                                        _ -> 
+                                            % check to see if the next condition is met
+                                            case {lists:nth(7, Board), Board} of
+                                                {0, [_, _, _, _, _, _, _, 1, 1]} -> 7;
+                                                _ -> 
+                                                    % check to see if left column is almost complete
+                                                    case {lists:nth(7, Board), Board} of
+                                                        {0, [1, _, _, 1, _, _, _, _, _]} -> 7;
+                                                        _ -> 
+                                                            % check to see if the next condition is met
+                                                            case {lists:nth(4, Board), Board} of
+                                                                {0, [1, _, _, _, _, _, 1, _, _]} -> 4;
+                                                                _ -> 
+                                                                    % check to see if the next condition is met
+                                                                    case {lists:nth(1, Board), Board} of
+                                                                        {0, [_, _, _, 1, _, _, 1, _, _]} -> 1;
+                                                                        _ -> 
+                                                                            % check to see if right column is almost complete
+                                                                            case {lists:nth(9, Board), Board} of
+                                                                                {0, [_, _, 1, _, _, 1, _, _, _]} -> 9;
+                                                                                _ -> 
+                                                                                    % check to see if the next condition is met
+                                                                                    case {lists:nth(6, Board), Board} of
+                                                                                        {0, [_, _, 1, _, _, _, _, _, 1]} -> 6;
+                                                                                        _ -> 
+                                                                                            % check to see if the next condition is met
+                                                                                            case {lists:nth(3, Board), Board} of
+                                                                                                {0, [_, _, _, _, _, 1, _, _, 1]} -> 3;
+                                                                                                _ -> findFirst(0, Board)
+                                                                                            end
+                                                                                    end
+                                                                            end
+                                                                    end
+                                                            end
+                                                    end
+                                            end
+                                    end
+                            end
+                    end
+            end
+   end.
 
-computeMove(Board) -> findFirst(0, Board).
+% rest of your code remains unchanged
+
+
+
+% helper function to determine if spot is empty or not
+checkMove(Board, Position) ->
+    case lists:nth(Position, Board) of
+        0 -> true;
+        _ -> false
+    end.
+
+
+
 
 findFirst(Target, [Head | Tail]) when (Target == Head) -> 1;                                % This is ugly because if the Target is never found in the list
 findFirst(Target, [Head | Tail]) when (Target /= Head) -> 1 + findFirst(Target, Tail);      % this function will return length(List)+1. At least it's not a
-findFirst(Target, [])                                  -> 1.                                % valid value, but this is NOT a standard convention. -1 would be better.
+findFirst(Target, [])                                  -> 1. 
 
 replaceInList(Value, Position, List) -> {Part1, Part2} = lists:split(Position-1, List),     % Break the list in two just before the specified Position.
                                         [Head | Tail] = Part2,                              % Separate Part2 into Head and Tail, discarding the Head.
