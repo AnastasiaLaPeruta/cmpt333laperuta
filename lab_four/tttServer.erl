@@ -51,6 +51,8 @@ serverLoop() -> receive
                    {FromNode, computer_turn, Board} ->
                       io:fwrite("~sReceived [computer_turn] request from node ~w with board ~p.~n",[?id, FromNode, Board]),
                       % Do more stuff here.
+                      NewBoard = processPlayerMove(computer_turn, Board),
+                      {tttClient, FromNode} ! {node(), player_turn, NewBoard},
                       serverLoop();
 
                    {FromNode, _Any} ->
@@ -67,7 +69,7 @@ processPlayerMove(Position, Board) ->
    if(Target == 0) ->
       io:fwrite("~sPlacing an X into position ~w.~n", [?id, Position]),
       UpdatedBoard = replaceInList(1, Position, Board),
-      UpdatedBoard;
+      makeMove(UpdatedBoard); % calls function that will decide computer move
    ?else ->
       io:fwrite("~sCannot place an X into position ~w.~n", [?id, Position]),
       Board
@@ -76,8 +78,9 @@ processPlayerMove(Position, Board) ->
 % added this in last, trying to make work
 makeMove(Board) -> io:fwrite("Calculating computer move...", []),
                    ComputerMove = computeMove(Board),
-                   io:fwrite("Pacing an O into position ~w.~n", [ComputerMove]),
-                   turn(player, replaceInList(-1, ComputerMove, Board)).
+                   io:fwrite("Placing an O into position ~w.~n", [ComputerMove]),
+                   replaceInList(-1, ComputerMove, Board).
+                   
 
 computeMove(Board) -> findFirst(0, Board).
 
@@ -89,7 +92,6 @@ replaceInList(Value, Position, List) -> {Part1, Part2} = lists:split(Position-1,
                                         [Head | Tail] = Part2,                              % Separate Part2 into Head and Tail, discarding the Head.
                                         Part1 ++ [Value] ++ Tail.                           % Cons together the result: Part1 ++ the new Value ++ the Tail from Part2.
 
-%replaceInList(Value, Position, List) ->
-%   {Part1, Part2} = lists:split(Position-1, List),     % Break the list in two just before the specified Position.
-%   [_ | Tail] = Part2,                                 % Separate Part2 into Head and Tail, discarding the Head.
-%   Part1 ++ [Value] ++ Tail.                           % CONS together the result: Part1 ++ the new Value ++ the Tail from Part2.
+
+
+
