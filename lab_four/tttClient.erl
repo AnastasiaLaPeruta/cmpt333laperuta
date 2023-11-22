@@ -58,7 +58,7 @@ clientLoop() -> receive
                       clientLoop()
                 end.
 
-% need to fix
+% makes sure that the input is only an integer between 1 and 9 inclusive
 getValidPlayerMove() ->
     case io:fread("Where do you want to move [1-9]? ", "~d") of
         {ok, PlayerMove} when is_integer(PlayerMove), PlayerMove >= 1, PlayerMove =< 9 ->
