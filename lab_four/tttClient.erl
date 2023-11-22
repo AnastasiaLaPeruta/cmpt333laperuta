@@ -48,7 +48,7 @@ clientLoop() -> receive
                       checkForWin(Board), % win must be checked first
                       checkForTie(Board), % before asking for move
                       io:fwrite("~s", [?id]),
-                      {ok, PlayerMove} = io:fread("Where do you want to move [1-9]? ", "~d"),   % PlayerMove gets read as a list.
+                      PlayerMove = getValidPlayerMove(),
                       io:fwrite("~sSending [process_player_turn] response to node ~w with board ~w and player move ~w.~n",[?id, FromNode, Board, hd(PlayerMove)]),
                       {tttServer, FromNode} ! {node(), process_player_turn, Board, hd(PlayerMove)},
                       clientLoop();
@@ -58,6 +58,15 @@ clientLoop() -> receive
                       clientLoop()
                 end.
 
+% need to fix
+getValidPlayerMove() ->
+    case io:fread("Where do you want to move [1-9]? ", "~d") of
+        {ok, PlayerMove} when is_integer(PlayerMove), PlayerMove >= 1, PlayerMove =< 9 ->
+            PlayerMove;
+        _ ->
+            io:format("Invalid input. Please enter a number between 1 and 9.~n"),
+            getValidPlayerMove()
+    end.
 
 %
 % Private; no messages either.
