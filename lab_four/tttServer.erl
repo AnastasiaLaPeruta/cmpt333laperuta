@@ -1,6 +1,8 @@
 %
 % tttServer.erl
+% Assistance with algorithm design provided by ChatGPT from OpenAI.
 %
+
 -module(tttServer).
 -author('Anastasia M. LaPeruta').
 
