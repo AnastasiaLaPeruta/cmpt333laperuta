@@ -44,13 +44,11 @@ serverLoop() -> receive
                    {FromNode, process_player_turn, Board, PlayerPos} ->
                       io:fwrite("~sReceived [process_player_turn] request from node ~w with board ~w and player move ~w.~n",[?id, FromNode, Board, PlayerPos]),
                       NewBoard = processPlayerMove(PlayerPos, Board),
-                      % Do more stuff here.
                       {tttClient, FromNode} ! {node(), player_turn, NewBoard},
                       serverLoop();
 
                    {FromNode, computer_turn, Board} ->
                       io:fwrite("~sReceived [computer_turn] request from node ~w with board ~p.~n",[?id, FromNode, Board]),
-                      % Do more stuff here.
                       NewBoard = processPlayerMove(computer_turn, Board),
                       {tttClient, FromNode} ! {node(), player_turn, NewBoard},
                       serverLoop();
@@ -144,7 +142,6 @@ computeMove(Board) ->
             end
    end.
 
-% rest of your code remains unchanged
 
 
 
@@ -165,8 +162,5 @@ findFirst(Target, [])                                  -> 1.
 replaceInList(Value, Position, List) -> {Part1, Part2} = lists:split(Position-1, List),     % Break the list in two just before the specified Position.
                                         [Head | Tail] = Part2,                              % Separate Part2 into Head and Tail, discarding the Head.
                                         Part1 ++ [Value] ++ Tail.                           % Cons together the result: Part1 ++ the new Value ++ the Tail from Part2.
-
-
-
 
 

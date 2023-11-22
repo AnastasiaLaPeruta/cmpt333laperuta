@@ -45,9 +45,9 @@ clientLoop() -> receive
                    {FromNode, player_turn, Board} ->
                       io:fwrite("~sReceived [player_turn] request from node ~w with board.~n",[?id, FromNode]),
                       displayBoard(Board),
-                      io:fwrite("~s", [?id]),
                       checkForWin(Board), % win must be checked first
                       checkForTie(Board), % before asking for move
+                      io:fwrite("~s", [?id]),
                       {ok, PlayerMove} = io:fread("Where do you want to move [1-9]? ", "~d"),   % PlayerMove gets read as a list.
                       io:fwrite("~sSending [process_player_turn] response to node ~w with board ~w and player move ~w.~n",[?id, FromNode, Board, hd(PlayerMove)]),
                       {tttServer, FromNode} ! {node(), process_player_turn, Board, hd(PlayerMove)},
@@ -132,5 +132,8 @@ checkForWin(Board) ->
       exit(normal);
       _ -> continue
    end.
+
+
+
 
 
