@@ -80,6 +80,7 @@ makeMove(Board) -> io:fwrite("Calculating computer move...", []),
                    replaceInList(-1, ComputerMove, Board).
                    
 % unfortunately only way to avoid illegal guard expression error
+% prioritizes checking to see if player is about to win and blocks it
 computeMove(Board) ->
    % check to see if top row is almost complete
    case {lists:nth(3, Board), Board} of
@@ -128,29 +129,121 @@ computeMove(Board) ->
                                                                                             % check to see if the next condition is met
                                                                                             case {lists:nth(3, Board), Board} of
                                                                                                 {0, [_, _, _, _, _, 1, _, _, 1]} -> 3;
-                                                                                                _ -> findFirst(0, Board)
+                                                                                                _ ->
+
+
+
+                                                                                                    % starts checking to see if possible computer winning move 
+                                                                                                    % check to see if top row is almost complete
+                                                                                                    case {lists:nth(3, Board), Board} of
+                                                                                                        {0, [-1, -1, _, _, _, _, _, _, _]} -> 3;
+                                                                                                        _ -> 
+                                                                                                            % check to see if the next condition is met
+                                                                                                            case {lists:nth(2, Board), Board} of
+                                                                                                                {0, [-1, _, -1, _, _, _, _, _, _]} -> 2;
+                                                                                                                _ -> 
+                                                                                                                    % check to see if the next condition is met
+                                                                                                                    case {lists:nth(1, Board), Board} of
+                                                                                                                        {0, [_, -1, -1, _, _, _, _, _, _]} -> 1;
+                                                                                                                        _ -> 
+                                                                                                                            % check to see if bottom row is almost complete
+                                                                                                                            case {lists:nth(9, Board), Board} of
+                                                                                                                                {0, [_, _, _, _, _, _, -1, -1, _]} -> 9;
+                                                                                                                                _ -> 
+                                                                                                                                    % check to see if the next condition is met
+                                                                                                                                    case {lists:nth(8, Board), Board} of
+                                                                                                                                        {0, [_, _, _, _, _, _, -1, _, -1]} -> 8;
+                                                                                                                                        _ -> 
+                                                                                                                                            % check to see if the next condition is met
+                                                                                                                                            case {lists:nth(7, Board), Board} of
+                                                                                                                                                {0, [_, _, _, _, _, _, _, -1, -1]} -> 7;
+                                                                                                                                                _ -> 
+                                                                                                                                                    % check to see if left column is almost complete
+                                                                                                                                                    case {lists:nth(7, Board), Board} of
+                                                                                                                                                        {0, [-1, _, _, -1, _, _, _, _, _]} -> 7;
+                                                                                                                                                        _ -> 
+                                                                                                                                                            % check to see if the next condition is met
+                                                                                                                                                            case {lists:nth(4, Board), Board} of
+                                                                                                                                                                {0, [-1, _, _, _, _, _, -1, _, _]} -> 4;
+                                                                                                                                                                _ -> 
+                                                                                                                                                                    % check to see if the next condition is met
+                                                                                                                                                                    case {lists:nth(1, Board), Board} of
+                                                                                                                                                                        {0, [_, _, _, -1, _, _, -1, _, _]} -> 1;
+                                                                                                                                                                        _ -> 
+                                                                                                                                                                            % check to see if right column is almost complete
+                                                                                                                                                                            case {lists:nth(9, Board), Board} of
+                                                                                                                                                                                {0, [_, _, -1, _, _, -1, _, _, _]} -> 9;
+                                                                                                                                                                                _ -> 
+                                                                                                                                                                                    % check to see if the next condition is met
+                                                                                                                                                                                    case {lists:nth(6, Board), Board} of
+                                                                                                                                                                                        {0, [_, _, -1, _, _, _, _, _, -1]} -> 6;
+                                                                                                                                                                                        _ -> 
+                                                                                                                                                                                            % check to see if the next condition is met
+                                                                                                                                                                                            case {lists:nth(3, Board), Board} of
+                                                                                                                                                                                                {0, [_, _, _, _, _, -1, _, _, -1]} -> 3;
+                                                                                                                                                                                                _ ->
+
+
+                                                                                                                                                                                                    % only checks diagonal for computer since it isn't possible for player to win that
+                                                                                                                                                                                                    % check to see if left diagonal is almost complete
+                                                                                                                                                                                                    case {lists:nth(1, Board), Board} of
+                                                                                                                                                                                                        {0, [_,_,_,_,-1,_,_,_,-1]} -> 1;
+                                                                                                                                                                                                        _ ->
+                                                                                                                                                                                                            % check to see if the next condition is met
+                                                                                                                                                                                                            case {lists:nth(5, Board), Board} of
+                                                                                                                                                                                                                {0, [-1,_,_,_,_,_,_,_,-1]} -> 5;
+                                                                                                                                                                                                                _ ->
+                                                                                                                                                                                                                    % check to see if the next condition is met
+                                                                                                                                                                                                                    case {lists:nth(9, Board), Board} of
+                                                                                                                                                                                                                        {0, [-1,_,_,_,-1,_,_,_,_]} -> 9;
+                                                                                                                                                                                                                        _ ->
+
+                                                                                                                                                                                                                            % check to see if right diagonal is almost complete
+                                                                                                                                                                                                                            case {lists:nth(3, Board), Board} of
+                                                                                                                                                                                                                                {0, [_,_,_,_,-1,_,-1,_,_]} -> 3;
+                                                                                                                                                                                                                                _ ->
+                                                                                                                                                                                                                                    case {lists:nth(5, Board), Board} of
+                                                                                                                                                                                                                                        {0, [_,_,-1,_,_,_,-1,_,_]} -> 5;
+                                                                                                                                                                                                                                        _ ->
+                                                                                                                                                                                                                                            % check to see if the next condition is met
+                                                                                                                                                                                                                                            case {lists:nth(7, Board), Board} of
+                                                                                                                                                                                                                                                {0, [_,_,-1,_,-1,_,_,_,_]} -> 7;
+
+
+                                                                                                                                                                                                                                                % otherwise pick first open position
+                                                                                                                                                                                                                                                _ -> findFirst(0, Board)% helper function to determine if spot is empty or not
+                                                                                                                                                                                                                                            end
+                                                                                                                                                                                                                                    end
+                                                                                                                                                                                                                            end                    
+
+                                                                                                                                                                                                                    end
+                                                                                                                                                                                                            end
+                                                                                                                                                                                                    end                                                           
+                                                                                                                                                                                            end
+                                                                                                                                                                                    end
+                                                                                                                                                                            end
+                                                                                                                                                                    end
+                                                                                                                                                            end
+                                                                                                                                                    end
+                                                                                                                                            end
+                                                                                                                                    end
+                                                                                                                            end
+                                                                                                                    end                                                                                                                                                  
+                                                                                                            end
+                                                                                                    end   
                                                                                             end
                                                                                     end
                                                                             end
                                                                     end
-                                                            end
+                                                             end
                                                     end
                                             end
                                     end
-                            end
-                    end
-            end
-   end.
+                             end
+                     end
+             end
+     end.
 
-
-
-
-% helper function to determine if spot is empty or not
-checkMove(Board, Position) ->
-    case lists:nth(Position, Board) of
-        0 -> true;
-        _ -> false
-    end.
 
 
 
