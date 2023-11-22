@@ -46,6 +46,8 @@ clientLoop() -> receive
                       io:fwrite("~sReceived [player_turn] request from node ~w with board.~n",[?id, FromNode]),
                       displayBoard(Board),
                       io:fwrite("~s", [?id]),
+                      checkForWin(Board), % win must be checked first
+                      checkForTie(Board), % before asking for move
                       {ok, PlayerMove} = io:fread("Where do you want to move [1-9]? ", "~d"),   % PlayerMove gets read as a list.
                       io:fwrite("~sSending [process_player_turn] response to node ~w with board ~w and player move ~w.~n",[?id, FromNode, Board, hd(PlayerMove)]),
                       {tttServer, FromNode} ! {node(), process_player_turn, Board, hd(PlayerMove)},
@@ -74,3 +76,61 @@ getDisplay(Board,Position) -> case lists:nth(Position, Board) of
                                  0 -> [" "];
                                  1 -> ["X"]
                               end.
+
+checkForTie(UpdatedBoard) ->
+    case lists:member(0, UpdatedBoard) of
+        true ->
+            ok;
+        false ->
+            io:fwrite("There has been a tie. GAME OVER."),
+            exit(normal)
+    end.
+
+
+
+checkForWin(Board) ->
+   case Board of
+      % top row win
+      [-1,-1,-1,_,_,_,_,_,_] -> io:fwrite("Computer wins!"),
+      exit(normal);
+      [1,1,1,_,_,_,_,_,_] -> io:fwrite("Player wins!"),
+      exit(normal);
+      % middle row win
+      [_,_,_,-1,-1,-1,_,_,_] -> io:fwrite("Computer wins!"),
+      exit(normal);
+      [_,_,_,1,1,1,_,_,_] -> io:fwrite("Player wins!"),
+      exit(normal);
+      % bottom row win
+      [_,_,_,_,_,_,-1,-1,-1] -> io:fwrite("Computer wins!"),
+      exit(normal);
+      [_,_,_,_,_,_,1,1,1] -> io:fwrite("Player wins!"),
+      exit(normal);
+      % left column win
+      [-1,_,_,-1,_,_,-1,_,_] -> io:fwrite("Computer wins!"),
+      exit(normal);
+      [1,_,_,1,_,_,1,_,_] -> io:fwrite("Player wins!"),
+      exit(normal);
+      % middle column win
+      [_,-1,_,_,-1,_,_,-1,_] -> io:fwrite("Computer wins!"),
+      exit(normal);
+      [_,1,_,_,1,_,_,1,_] -> io:fwrite("Player wins!"),
+      exit(normal);
+      % right column win
+      [_,_,-1,_,_,-1,_,_,-1] -> io:fwrite("Computer wins!"),
+      exit(normal);
+      [_,_,1,_,_,1,_,_,1] -> io:fwrite("Player wins!"),
+      exit(normal);
+      % left diagonal win
+      [-1,_,_,_,-1,_,_,_,-1] -> io:fwrite("Computer wins!"),
+      exit(normal);
+      [1,_,_,_,1,_,_,_,1] -> io:fwrite("Player wins!"),
+      exit(normal);
+      % right diagonal win
+      [_,_,-1,_,-1,_,-1,_,_] -> io:fwrite("Computer wins!"),
+      exit(normal);
+      [_,_,1,_,1,_,1,_,_] -> io:fwrite("Player wins!"),
+      exit(normal);
+      _ -> continue
+   end.
+
+
