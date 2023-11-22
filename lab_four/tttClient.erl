@@ -43,47 +43,40 @@ play(ServerNode) ->
 %
 clientLoop() ->
     receive
-    {FromNode, player_turn, Board} ->
-        io:fwrite("~sReceived [player_turn] request from node ~w with board.~n", [?id, FromNode]),
-        displayBoard(Board),
-        checkForWin(Board), % Win must be checked first
-        checkForTie(Board), % Before asking for a move
-
-        io:fwrite("~s", [?id]),
-        PlayerMove = getValidPlayerMove(),
-        case PlayerMove of
-            {ok, Move} ->
-                io:fwrite("~sSending [process_player_turn] response to node ~w with board ~w and player move ~w.~n", [?id, FromNode, Board, Move]),
-                {tttServer, FromNode} ! {node(), process_player_turn, Board, Move},
-                clientLoop();
-            _ ->
-                io:fwrite("~sInvalid player move received.~n", [?id]),
-                clientLoop()
-        end;
-    {FromNode, _Any}  ->
-        io:fwrite("~sReceived unknown request [~p] from node ~w.~n", [?id, _Any, FromNode]),
-        clientLoop()
-end.
-
-
-
-
-% makes sure that the input is only an integer between 1 and 9 inclusive
-getValidPlayerMove() ->
-    io:format("Where do you want to move [1-9]? "),
-    case catch list_to_integer(io:get_line("")) of
-        {integer, Move} when Move >= 1, Move =< 9 ->
-            io:format("Valid input: ~p~n", [Move]),
-            {ok, Move};
-        _ ->
-            io:format("Invalid input. Please enter a number between 1 and 9.~n"),
-            {error, invalid_move}
+        {FromNode, player_turn, Board} ->
+            io:fwrite("~sReceived [player_turn] request from node ~w with board.~n", [?id, FromNode]),
+            displayBoard(Board),
+            io:fwrite("~s", [?id]),
+            checkForWin(Board), % win must be checked first
+            checkForTie(Board), % before asking for move
+            io:fwrite("~s", [?id]),
+            {ok, PlayerMove} = getValidInput(),
+            io:fwrite("~sSending [process_player_turn] response to node ~w with board ~w and player move ~w.~n", [?id, FromNode, Board, PlayerMove]),
+            {tttServer, FromNode} ! {node(), process_player_turn, Board, PlayerMove},
+            clientLoop();
+        {FromNode, _Any}  ->
+            io:fwrite("~sReceived unknown request [~p] from node ~w.~n", [?id, _Any, FromNode]),
+            clientLoop()
     end.
 
-
-
-
-
+% handles all bad input
+getValidInput() ->
+    try io:fread("Where do you want to move [1-9]? ", "~d") of
+        {ok, [Input]} ->
+            if 
+                Input >= 1, Input =< 9 ->
+                    {ok, Input};
+                true ->
+                    io:fwrite("Bad input. Try again. ~n"),
+                    getValidInput()
+            end;
+        {error, {fread, integer}} ->
+            io:fwrite("Bad input. Try again.~n"),
+            getValidInput()
+    catch
+        _:_ ->
+            {error, invalid_input}
+    end.
 %
 % Private; no messages either.
 %

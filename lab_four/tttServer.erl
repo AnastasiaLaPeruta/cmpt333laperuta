@@ -79,7 +79,7 @@ makeMove(Board) -> io:fwrite("Calculating computer move...", []),
                    io:fwrite("Placing an O into position ~w.~n", [ComputerMove]),
                    replaceInList(-1, ComputerMove, Board).
                    
-% unfortunately only way to avoid illegal guard error
+% unfortunately only way to avoid illegal guard expression error
 computeMove(Board) ->
    % check to see if top row is almost complete
    case {lists:nth(3, Board), Board} of
