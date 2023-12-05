@@ -80,9 +80,23 @@ showMap(CurrentLocale) ->
    io_lib:format("................... ~n",    []).
 
 
+dispLocale(CurrentLocale, MapLoc) ->
+   if CurrentLocale == MapLoc ->
+      "@";
+   ?else ->
+      integer_to_list(MapLoc)  % Remember, strings are lists of ASCII/Unicode values in Erlang.
+   end.
+
+
 playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    % -- Get a line of input from the user.
    io:fwrite("~s", [showMap(CurrentLocale)]),
+   % doesn't let score fall below 0
+   if (Score >= 0) ->
+      io:fwrite("~nScore=~w  Turn ~w ] ", [Score, TurnCount]);
+   ?else ->
+      io:fwrite("~nScore=~w  Turn ~w ] ", [0, TurnCount])
+   end,
    Line = io:get_line(io_lib:format("~s[play] Enter action or help -] ", [?id])),  % Line is returned as a string.
    {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList),
    %
@@ -90,7 +104,7 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    io:fwrite("~s~s~n", [?id, ResultText]),
    %
    % -- Quit or Recurse/Loop.
-   if (ResultAtom == quit) ->
+   if (ResultAtom == quit orelse CurrentLocale == loc6) ->
       io:fwrite("~sThank you for playing.~n", [?id]);
    ?else ->
      playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
@@ -106,14 +120,22 @@ processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)
    Noun = lists:dropwhile( fun(Element) -> Element /= 32 end, Command),
    %
    case Verb of
-      "help"   -> {help,   helpText()};
-      "quit"   -> {quit,   "Quitting."};
-      "q"      -> {quit,   "Quitting."};
-      "nodes"  -> {nodes,  listNodes()};
-      "server" -> {server, server(ServerNode)};
-      "go"     -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)};
+      "help"     -> {help,   helpText()};
+      "quit"     -> {quit,   "Quitting."};
+      "q"        -> {quit,   "Quitting."};
+      "nodes"    -> {nodes,  listNodes()};
+      "server"   -> {server, server(ServerNode)};
+      "go"       -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)};
+      "look"     -> {CurrentLocale, locationDesc(CurrentLocale)};
+      "l"        -> {CurrentLocale, locationDesc(CurrentLocale)};
+      "h"        -> {CurrentLocale, helpText()};
+      "help"     -> {CurrentLocale, helpText()};
+      "map"      -> {CurrentLocale, showMap(CurrentLocale)};
+      "show map" -> {CurrentLocale, showMap(CurrentLocale)};
+      "inventory"-> {CurrentLocale, showInventory(Inventory)};
+      "i"        -> {CurrentLocale, showInventory(Inventory)};
       % -- Otherwise...
-      _Else  -> {unknownCommand, "Silly human."}
+      _Else      -> {unknownCommand, "I do  not understand that command."}
    end.
 
 helpText() ->
@@ -134,12 +156,21 @@ server(ServerNode) ->
 go([_Space | Destination], ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    DestAtom = list_to_atom(Destination),
    io:fwrite("~s[debug] Going [~w].~n", [?id, DestAtom]),
+    % -- Compass directions - Get the new location from the server.
+   if DestAtom == "north" -> move(ServerPid, {CurrentLocale, north});
+   if DestAtom == "n"     -> move(ServerPid, {CurrentLocale, north});
+   if DestAtom == "south" -> move(ServerPid, {CurrentLocale, south});
+   if DestAtom == "s"     -> move(ServerPid, {CurrentLocale, south});
+   if DestAtom == "east"  -> move(ServerPid, {CurrentLocale, east});
+   if DestAtom == "e"     -> move(ServerPid, {CurrentLocale, east});
+   if DestAtom == "west"  -> move(ServerPid, {CurrentLocale, west});
+   if DestAtom == "w"     -> move(ServerPid, {CurrentLocale, west});
    if (CurrentLocale == loc3) ->
       % adds the 20 point bonus when location 3 is reached
-      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score+20, goToLocation, DestAtom, lists:append(InventoryList,locationItems(NewLocale))};  % This is tail recursion, so it's really a jump to the top of gameLoop.
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score+20, goToLocation, DestAtom, lists:append(InventoryList,locationItems(CurrentLocale))};  % This is tail recursion, so it's really a jump to the top of gameLoop.
       % otherwise keeps decreasing score by 10 each move
    ?else ->
-      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score-10, goToLocation, DestAtom, lists:append(InventoryList,locationItems(NewLocale))}
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score-10, goToLocation, DestAtom, lists:append(InventoryList,locationItems(CurrentLocale))}
    end,
    ok.
 go([], _ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
