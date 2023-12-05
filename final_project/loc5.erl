@@ -3,7 +3,7 @@
 -module(loc5).
 -author('Anastasia M. LaPeruta').
 -define(else, true).  % -- This is to make the if statements (somewhat) readable.
--define(id, "-- location 4: ").
+-define(id, "-- location 5: ").
 
 
 %--------
@@ -73,4 +73,6 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(4) You have fallen into the Hudson River and are being taken away by the strong current.", []).
+   io_lib:format("(5) North Carolina: You are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []).
+
+itemsScattered() -> [compass].

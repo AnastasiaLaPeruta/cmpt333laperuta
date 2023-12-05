@@ -35,7 +35,7 @@ start(ServerNode) ->
    % Initialize server monitoring.
    gameClient ! {monitor, ServerNode},
    % -- Begin the play loop
-   playLoop(ServerNode).
+   playLoop(ServerNode, 1, 120, 0, []).
 
 
 %---------------------------------
@@ -66,10 +66,25 @@ clientLoop() ->
 % Private
 %---------
 
-playLoop(ServerNode) ->
+
+% Show map. Double-check with mapper().
+showMap(CurrentLocale) ->
+   io_lib:format("................... ~n",    []) ++
+   io_lib:format(".............. ~s .. ~n",   [dispLocale(CurrentLocale, 6)]) ++
+   io_lib:format(".............. | .. ~n",    []) ++
+   io_lib:format(".............. | .. ~n",    []) ++
+   io_lib:format(".. ~s --- ~s --- ~s .. ~n", [dispLocale(CurrentLocale, 1), dispLocale(CurrentLocale, 0), dispLocale(CurrentLocale, 5)]) ++
+   io_lib:format(".. |.... | ... | .. ~n",    []) ++
+   io_lib:format(".. |.... | ... | .. ~n",    []) ++
+   io_lib:format(".. ~s --- ~s --- ~s .. ~n",  [dispLocale(CurrentLocale, 2), dispLocale(CurrentLocale, 3), dispLocale(CurrentLocale, 4)]) ++
+   io_lib:format("................... ~n",    []).
+
+
+playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    % -- Get a line of input from the user.
+   io:fwrite("~s", [showMap(CurrentLocale)]),
    Line = io:get_line(io_lib:format("~s[play] Enter action or help -] ", [?id])),  % Line is returned as a string.
-   {ResultAtom, ResultText} = processCommand(Line, ServerNode),
+   {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList),
    %
    % -- Update the display.
    io:fwrite("~s~s~n", [?id, ResultText]),
@@ -78,11 +93,11 @@ playLoop(ServerNode) ->
    if (ResultAtom == quit) ->
       io:fwrite("~sThank you for playing.~n", [?id]);
    ?else ->
-     playLoop(ServerNode)  % This is tail recursion, so it's really a jump to the top of playLoop.
+     playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
    end. % if
 
 
-processCommand(Line , ServerNode) ->
+processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    % Do some elementary parsing of the line in two parts:
    % 1. Remove the trailing newline charater.
    Command = lists:sublist(Line, length(Line)-1),  % (Because Line is a character list ending with a linefeed.)
@@ -96,7 +111,7 @@ processCommand(Line , ServerNode) ->
       "q"      -> {quit,   "Quitting."};
       "nodes"  -> {nodes,  listNodes()};
       "server" -> {server, server(ServerNode)};
-      "go"     -> {go,     go(Noun, ServerNode)};
+      "go"     -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)};
       % -- Otherwise...
       _Else  -> {unknownCommand, "Silly human."}
    end.
@@ -116,10 +131,16 @@ server(ServerNode) ->
       io_lib:format("Talking to game server on node ~w, which is NOT known to be in our cluster, and that may be a problem.", [ServerNode])
    end. % if
 
-go([_Space | Destination], ServerNode) ->
+go([_Space | Destination], ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    DestAtom = list_to_atom(Destination),
-   io:fwrite("~s[debug] Going to location [~w].~n", [?id, DestAtom]),
-   {gameServer, ServerNode} ! {node(), goToLocation, DestAtom},
-   ok;
-go([], _ServerNode) ->
+   io:fwrite("~s[debug] Going [~w].~n", [?id, DestAtom]),
+   if (CurrentLocale == loc3) ->
+      % adds the 20 point bonus when location 3 is reached
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score+20, goToLocation, DestAtom, lists:append(InventoryList,locationItems(NewLocale))};  % This is tail recursion, so it's really a jump to the top of gameLoop.
+      % otherwise keeps decreasing score by 10 each move
+   ?else ->
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score-10, goToLocation, DestAtom, lists:append(InventoryList,locationItems(NewLocale))}
+   end,
+   ok.
+go([], _ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    io_lib:format("Where do you want to go?", []).

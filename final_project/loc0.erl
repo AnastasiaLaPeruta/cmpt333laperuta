@@ -1,9 +1,9 @@
-% loc7.erl - Distributed Adventure Game Location 4
+% loc0.erl - Distributed Adventure Game Location 4
 
--module(loc7).
+-module(loc0).
 -author('Anastasia M. LaPeruta').
 -define(else, true).  % -- This is to make the if statements (somewhat) readable.
--define(id, "-- location 4: ").
+-define(id, "-- location 0: ").
 
 
 %--------
@@ -18,25 +18,25 @@ start() ->
 start(ServerNode) ->
    % -- Spawn this location process.
    io:fwrite("~sStarting Location 4 (pid ~w) on node ~w.~n",[?id, self(), node()]),
-   LocPid = spawn(loc7, locationLoop, []),
+   LocPid = spawn(loc0, locationLoop, []),
    io:fwrite("~sSpawned location with pid ~w",[?id, LocPid]),
    % We want to publish this process in Erlang's process registry.
    % Before we do that, we need to un-register it if it's already been registered.
-   SomePlace = whereis(loc7),
+   SomePlace = whereis(loc0),
    if (SomePlace /= undefined) ->  % "not undefined" = "is defined"  (This is horrible, I know.)
-      unregister(loc7);
+      unregister(loc0);
    ?else ->
       % The proccess was NOT already published/registered, so we don't really want to do anything here.
       true    % This is dumb, but I couldn't think of a better "no-op".
    end,
    % Publish this process in Erlang's process registry.
-   register(loc7, LocPid),
-   io:fwrite(", registered as ~w.~n",[loc7]),
+   register(loc0, LocPid),
+   io:fwrite(", registered as ~w.~n",[loc0]),
    % Send ourselves to the gameServer.
    io:fwrite("~sNotifying server on node ~w.~n",[?id, ServerNode]),
-   {gameServer, ServerNode} ! {node(), registerNewLocation, loc7},
+   {gameServer, ServerNode} ! {node(), registerNewLocation, loc0},
    % Initialize server monitoring.
-   loc7 ! {monitor, ServerNode},
+   loc0 ! {monitor, ServerNode},
    ok.
 
 
@@ -59,7 +59,7 @@ locationLoop() ->
          exit(normal);
 
       {_FromNode, enter, GameClientNode}  ->
-         io:fwrite("~sA gameClient on ~w is entering loc7.~n",[?id, GameClientNode]),
+         io:fwrite("~sA gameClient on ~w is entering loc0.~n",[?id, GameClientNode]),
          {gameClient, GameClientNode} ! {node(), describe()},
          locationLoop();
 
@@ -73,4 +73,6 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(4) You have fallen into the Hudson River and are being taken away by the strong current.", []).
+   io_lib:format("(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!", []).
+
+itemsScattered() -> [brochure, pocketknife].

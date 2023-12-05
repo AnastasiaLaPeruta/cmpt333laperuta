@@ -6,6 +6,8 @@
 -define(id, "-- game server: ").
 
 
+-type direction() :: north | south | east | west.
+
 %--------
 % Public
 %--------
@@ -14,7 +16,7 @@
 
 start() ->
    % -- Spawn the server process.
-   io:fwrite("~sStarting Distributed Adventure Game Server (pid ~w) on node ~w.~n",[?id, self(), node()]),
+   io:fwrite("~sStarting Distributed Adventure Game Server (pid ~w) on node ~w.~nYou are on a road trip across the US when natural disasters break loose across all fifty states. Do your best to say safe.~n",[?id, self(), node()]),
    GameServerPid = spawn(fun serverLoop/0),
    io:fwrite("~sSpawned game server with pid ~w",[?id, GameServerPid]),
    % We want to publish this process in Erlang's local process registry.
@@ -77,10 +79,10 @@ serverLoop() ->
          erase(hd(LocIdList)),            % erase it from our process dictionary.
          serverLoop();
 
-      {FromNode, goToLocation, ClientLocId}  ->
-         io:fwrite("~sReceived goToLocation message from node ~w for location [~w].~n",[?id, FromNode, ClientLocId]),
+      {FromNode, CurrentLocale, TurnCount, Score, goToLocation, ClientLocId, InventoryList}  ->
+         io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, ClientLocId]),
          % Look up the ClientLocId in our local process dictionary
-         io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, ClientLocId]),
+         io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, mapper(CurrentLocale,ClientLocId)]),
          ClientLocNode = get(ClientLocId),
          if ClientLocNode == undefined ->
             io:fwrite("~sNode not found in the local process dictionary.~n", [?id]),
@@ -102,6 +104,28 @@ serverLoop() ->
          io:fwrite("~sReceived unknown request [~p, ~p] from node ~w.~n",[?id, _Any1, _Any2, FromNode]),
          serverLoop()
    end.
+
+
+% Mapper. Decides location based on direction
+mapper(-1, north) -> loc0; 
+mapper( 0, west)  -> loc1;
+mapper( 0, east)  -> loc5;
+mapper( 0, south) -> loc3;
+mapper( 1, south) -> loc2;
+mapper( 1, east)  -> loc0;
+mapper( 2, east)  -> loc3;
+mapper( 2, north) -> loc1;
+mapper( 3, east)  -> loc4;
+mapper( 3, west)  -> loc2;
+mapper( 3, north) -> loc0;
+mapper( 4, north) -> loc5;
+mapper( 4, west)  -> loc3;
+mapper( 5, north) -> loc6;
+mapper( 5, south) -> loc4;
+mapper( 5, west)  -> loc0;
+mapper( 6, south) -> loc5;
+mapper( _, _)     ->-1.
+
 
 
 %---------
