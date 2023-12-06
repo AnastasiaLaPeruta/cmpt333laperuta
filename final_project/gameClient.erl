@@ -160,14 +160,14 @@ go([_Space | Destination], ServerNode, TurnCount, Score, CurrentLocale, Inventor
    io:fwrite("~s[debug] Going [~w].~n", [?id, DestAtom]),
     % -- Compass directions - Get the new location from the server.
    case DestAtom of
-      "north" -> move(ServerNode, {CurrentLocale, north});
-      "n"     -> move(ServerNode, {CurrentLocale, north});
-      "south" -> move(ServerNode, {CurrentLocale, south});
-      "s"     -> move(ServerNode, {CurrentLocale, south});
-      "east"  -> move(ServerNode, {CurrentLocale, east});
-      "e"     -> move(ServerNode, {CurrentLocale, east});
-      "west"  -> move(ServerNode, {CurrentLocale, west});
-      "w"     -> move(ServerNode, {CurrentLocale, west});
+      north -> move(ServerNode, {CurrentLocale, north});
+      n     -> move(ServerNode, {CurrentLocale, north});
+      south -> move(ServerNode, {CurrentLocale, south});
+      s     -> move(ServerNode, {CurrentLocale, south});
+      east  -> move(ServerNode, {CurrentLocale, east});
+      e     -> move(ServerNode, {CurrentLocale, east});
+      west  -> move(ServerNode, {CurrentLocale, west});
+      w    -> move(ServerNode, {CurrentLocale, west});
       _       -> io:fwrite("That is not a direction.")  
    end,
    if (CurrentLocale == loc3) ->

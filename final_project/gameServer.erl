@@ -92,7 +92,7 @@ serverLoop(InventoryList) ->
             io:fwrite("~sFound node in the local process dictionary: [~w].~n", [?id, ClientLocNode]),
             {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."},
             % Tell the ClientLocId on ClientLocNode that a gameClient on FromNode is entering.
-            {ClientLocId, ClientLocNode} ! {node(), enter, FromNode}
+            {ClientLocId, ClientLocNode} ! {self(), enter, FromNode}
          end, % if
          serverLoop(InventoryList);
 
@@ -124,7 +124,8 @@ mapper( 5, north) -> loc6;
 mapper( 5, south) -> loc4;
 mapper( 5, west)  -> loc0;
 mapper( 6, south) -> loc5;
-mapper( _, _)     -> undefined.
+mapper(_, _) -> -1.
+
 
 
 
