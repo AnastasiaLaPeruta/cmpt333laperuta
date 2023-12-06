@@ -34,7 +34,7 @@ start(ServerNode) ->
    io:fwrite(", registered as ~w.~n",[loc6]),
    % Send ourselves to the gameServer.
    io:fwrite("~sNotifying server on node ~w.~n",[?id, ServerNode]),
-   {gameServer, ServerNode} ! {node(), registerNewLocation, loc6},
+   {gameServer, ServerNode} ! {node(), registerNewLocation, loc6, [itemsScattered()]},
    % Initialize server monitoring.
    loc6 ! {monitor, ServerNode},
    ok.
@@ -73,7 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(6) Canadian Border: You successfully escaped to Canada.", []);
-   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
+   io_lib:format("(6) Canadian Border: You successfully escaped to Canada.", []),
+   io_lib:format("You see ~w scattered around.", [itemsScattered()]).
 
 itemsScattered() -> [].

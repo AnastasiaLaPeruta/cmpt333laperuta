@@ -34,7 +34,7 @@ start(ServerNode) ->
    io:fwrite(", registered as ~w.~n",[loc0]),
    % Send ourselves to the gameServer.
    io:fwrite("~sNotifying server on node ~w.~n",[?id, ServerNode]),
-   {gameServer, ServerNode} ! {node(), registerNewLocation, loc0},
+   {gameServer, ServerNode} ! {node(), registerNewLocation, loc0, [itemsScattered()]},
    % Initialize server monitoring.
    loc0 ! {monitor, ServerNode},
    ok.
@@ -73,7 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!", []);
-   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
+   io_lib:format("(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!", []),
+   io_lib:format("You see ~w scattered around.", [itemsScattered()]).
 
 itemsScattered() -> [brochure, pocketknife].

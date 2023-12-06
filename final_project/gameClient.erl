@@ -126,17 +126,19 @@ processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)
       "nodes"    -> {nodes,  listNodes()};
       "server"   -> {server, server(ServerNode)};
       "go"       -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)};
-      "look"     -> {CurrentLocale, locationDesc(CurrentLocale)};
-      "l"        -> {CurrentLocale, locationDesc(CurrentLocale)};
       "h"        -> {CurrentLocale, helpText()};
       "help"     -> {CurrentLocale, helpText()};
       "map"      -> {CurrentLocale, showMap(CurrentLocale)};
       "show map" -> {CurrentLocale, showMap(CurrentLocale)};
-      "inventory"-> {CurrentLocale, showInventory(Inventory)};
-      "i"        -> {CurrentLocale, showInventory(Inventory)};
+      "inventory"-> {CurrentLocale, showInventory(InventoryList)};
+      "i"        -> {CurrentLocale, showInventory(InventoryList)};
       % -- Otherwise...
       _Else      -> {unknownCommand, "I do  not understand that command."}
    end.
+
+showInventory([])            -> io_lib:format("You are not carrying anything of use.", []);
+showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [lists:usort(InventoryList)]).
+
 
 helpText() ->
    io_lib:format("Commands: [help], [quit], [nodes], [server], [go <location>]", []).
@@ -157,21 +159,32 @@ go([_Space | Destination], ServerNode, TurnCount, Score, CurrentLocale, Inventor
    DestAtom = list_to_atom(Destination),
    io:fwrite("~s[debug] Going [~w].~n", [?id, DestAtom]),
     % -- Compass directions - Get the new location from the server.
-   if DestAtom == "north" -> move(ServerPid, {CurrentLocale, north});
-   if DestAtom == "n"     -> move(ServerPid, {CurrentLocale, north});
-   if DestAtom == "south" -> move(ServerPid, {CurrentLocale, south});
-   if DestAtom == "s"     -> move(ServerPid, {CurrentLocale, south});
-   if DestAtom == "east"  -> move(ServerPid, {CurrentLocale, east});
-   if DestAtom == "e"     -> move(ServerPid, {CurrentLocale, east});
-   if DestAtom == "west"  -> move(ServerPid, {CurrentLocale, west});
-   if DestAtom == "w"     -> move(ServerPid, {CurrentLocale, west});
+   case DestAtom of
+      "north" -> move(ServerNode, {CurrentLocale, north});
+      "n"     -> move(ServerNode, {CurrentLocale, north});
+      "south" -> move(ServerNode, {CurrentLocale, south});
+      "s"     -> move(ServerNode, {CurrentLocale, south});
+      "east"  -> move(ServerNode, {CurrentLocale, east});
+      "e"     -> move(ServerNode, {CurrentLocale, east});
+      "west"  -> move(ServerNode, {CurrentLocale, west});
+      "w"     -> move(ServerNode, {CurrentLocale, west});
+      _       -> io:fwrite("That is not a direction.")  
+   end,
    if (CurrentLocale == loc3) ->
       % adds the 20 point bonus when location 3 is reached
-      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score+20, goToLocation, DestAtom, lists:append(InventoryList,locationItems(CurrentLocale))};  % This is tail recursion, so it's really a jump to the top of gameLoop.
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score+20, goToLocation, DestAtom, InventoryList};  % This is tail recursion, so it's really a jump to the top of gameLoop.
       % otherwise keeps decreasing score by 10 each move
    ?else ->
-      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score-10, goToLocation, DestAtom, lists:append(InventoryList,locationItems(CurrentLocale))}
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score-10, goToLocation, DestAtom, InventoryList}
    end,
-   ok.
-go([], _ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
+   ok;
+go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList) ->
    io_lib:format("Where do you want to go?", []).
+
+
+% Send the move message (a tuple) to itself.
+move(ServerPid, MoveTuple) ->
+   ServerPid ! {self(), MoveTuple},
+   receive
+      {ServerPid, Response} -> Response  % This waits for a response from ToPid.
+   end.

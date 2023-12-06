@@ -17,7 +17,7 @@
 start() ->
    % -- Spawn the server process.
    io:fwrite("~sStarting Distributed Adventure Game Server (pid ~w) on node ~w.~nYou are on a road trip across the US when natural disasters break loose across all fifty states. Do your best to say safe.~n",[?id, self(), node()]),
-   GameServerPid = spawn(fun serverLoop/0),
+    GameServerPid = spawn(fun() -> serverLoop([]) end),  % Provides an initial value for InventoryList
    io:fwrite("~sSpawned game server with pid ~w",[?id, GameServerPid]),
    % We want to publish this process in Erlang's local process registry.
    % Before we do that, we need to un-register it if it's already been registered.
@@ -40,19 +40,19 @@ start() ->
 %---------------------------------
 % Private, but accepting messages.
 %---------------------------------
-serverLoop() ->
+serverLoop(InventoryList) ->
    receive
 
       % Local requests
 
       {local, listClientLocations} ->
          io:fwrite("~sThis server knows about the following (client) locations: ~w~n", [?id, get()]),
-         serverLoop();
+         serverLoop(InventoryList);
 
       {local, listNodes} ->
          io:fwrite("~sThis node: ~w~n", [?id, node()]),
          io:fwrite("~sOther nodes in our cluster: ~w~n", [?id, nodes()]),
-         serverLoop();
+         serverLoop(InventoryList);
 
       {local, endProcess} ->
          io:fwrite("~sThis server processes is ending. Good bye.~n", [?id]),
@@ -61,14 +61,14 @@ serverLoop() ->
 
       % Remote requests
 
-      {FromNode, registerNewLocation, LocId}  ->
+      {FromNode, registerNewLocation, LocId, Inventory}  ->
          io:fwrite("~sReceived registerNewLocation message from node ~w for ~w.~n",[?id, FromNode, LocId]),
          % Record this clientLocation and node in our process dictionary.
          io:fwrite("~sPutting {~w,~w} in the local process dictionary.~n", [?id, LocId, FromNode]),
          put(LocId, FromNode),
          io:fwrite("~sWe are now monitoring ~w.~n", [?id, FromNode]),
          monitor_node(FromNode, true),
-         serverLoop();
+         serverLoop(lists:append(InventoryList,Inventory));
 
       {nodedown, Node} ->
          % This server monitors location nodes.
@@ -77,7 +77,7 @@ serverLoop() ->
          % ...  and remove it from our process dictionary.
          LocIdList = get_keys(Node),      % We know the node but we need the LocId to
          erase(hd(LocIdList)),            % erase it from our process dictionary.
-         serverLoop();
+         serverLoop(InventoryList);
 
       {FromNode, CurrentLocale, TurnCount, Score, goToLocation, ClientLocId, InventoryList}  ->
          io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, ClientLocId]),
@@ -94,15 +94,15 @@ serverLoop() ->
             % Tell the ClientLocId on ClientLocNode that a gameClient on FromNode is entering.
             {ClientLocId, ClientLocNode} ! {node(), enter, FromNode}
          end, % if
-         serverLoop();
+         serverLoop(InventoryList);
 
       {FromNode, _Any}  ->
          io:fwrite("~sReceived unknown request [~p] from node ~w.~n",[?id, _Any, FromNode]),
-         serverLoop();
+         serverLoop(InventoryList);
 
       {FromNode, _Any1, _Any2}  ->
          io:fwrite("~sReceived unknown request [~p, ~p] from node ~w.~n",[?id, _Any1, _Any2, FromNode]),
-         serverLoop()
+         serverLoop(InventoryList)
    end.
 
 

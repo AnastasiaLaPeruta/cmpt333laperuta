@@ -34,7 +34,7 @@ start(ServerNode) ->
    io:fwrite(", registered as ~w.~n",[loc3]),
    % Send ourselves to the gameServer.
    io:fwrite("~sNotifying server on node ~w.~n",[?id, ServerNode]),
-   {gameServer, ServerNode} ! {node(), registerNewLocation, loc3},
+   {gameServer, ServerNode} ! {node(), registerNewLocation, loc3, [itemsScattered()]},
    % Initialize server monitoring.
    loc3 ! {monitor, ServerNode},
    ok.
@@ -73,7 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(3) Texas: You have been given 20 bonus points! Unfortunately, massive tornadoes rip through the state, each a mile wide and you must evacuate.", []);
-   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
+   io_lib:format("(3) Texas: You have been given 20 bonus points! Unfortunately, massive tornadoes rip through the state, each a mile wide and you must evacuate.", []),
+   io_lib:format("You see ~w scattered around.", [itemsScattered()]).
 
 itemsScattered() -> [].

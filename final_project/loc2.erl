@@ -34,7 +34,7 @@ start(ServerNode) ->
    io:fwrite(", registered as ~w.~n",[loc2]),
    % Send ourselves to the gameServer.
    io:fwrite("~sNotifying server on node ~w.~n",[?id, ServerNode]),
-   {gameServer, ServerNode} ! {node(), registerNewLocation, loc2},
+   {gameServer, ServerNode} ! {node(), registerNewLocation, loc2, [itemsScattered()]},
    % Initialize server monitoring.
    loc2 ! {monitor, ServerNode},
    ok.
@@ -73,7 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(2) California: Usually sunny and clear skies, a wildfire creates clouds of smoke that cause low visibility.", []);
-   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
+   io_lib:format("(2) California: Usually sunny and clear skies, a wildfire creates clouds of smoke that cause low visibility.", []),
+   io_lib:format("You see ~w scattered around.", [itemsScattered()]).
 
 itemsScattered() -> [water_bottle].

@@ -34,7 +34,7 @@ start(ServerNode) ->
    io:fwrite(", registered as ~w.~n",[loc5]),
    % Send ourselves to the gameServer.
    io:fwrite("~sNotifying server on node ~w.~n",[?id, ServerNode]),
-   {gameServer, ServerNode} ! {node(), registerNewLocation, loc5},
+   {gameServer, ServerNode} ! {node(), registerNewLocation, loc5, [itemsScattered()]},
    % Initialize server monitoring.
    loc5 ! {monitor, ServerNode},
    ok.
@@ -73,7 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(5) North Carolina: You are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []);
-   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
+   io_lib:format("(5) North Carolina: You are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []),
+   io_lib:format("You see ~w scattered around.", [itemsScattered()]).
 
 itemsScattered() -> [compass].
