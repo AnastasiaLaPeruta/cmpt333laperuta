@@ -83,7 +83,7 @@ serverLoop(InventoryList) ->
          io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, ClientLocId]),
          % Look up the ClientLocId in our local process dictionary
          io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, mapper(CurrentLocale,ClientLocId)]),
-         ClientLocNode = get(ClientLocId),
+         ClientLocNode = get(mapper(CurrentLocale, ClientLocId)),
          if ClientLocNode == undefined ->
             io:fwrite("~sNode not found in the local process dictionary.~n", [?id]),
             % Use only FromPid here because we don't know the registered name of the process (because there is none).
@@ -124,7 +124,7 @@ mapper( 5, north) -> loc6;
 mapper( 5, south) -> loc4;
 mapper( 5, west)  -> loc0;
 mapper( 6, south) -> loc5;
-mapper( _, _)     ->-1.
+mapper( _, _)     -> undefined.
 
 
 
