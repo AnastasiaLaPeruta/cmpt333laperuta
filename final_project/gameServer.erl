@@ -95,6 +95,16 @@ serverLoop(InventoryList) ->
             {ClientLocId, ClientLocNode} ! {self(), enter, FromNode}
          end, % if
          serverLoop(InventoryList);
+   
+
+      {FromNode, {Num, Direction}} ->
+         mapper(Num, Direction),
+         io:fwrite("~sReceived move from node ~w for direction [~w].~n",[?id, FromNode, Direction]),
+         serverLoop(InventoryList);
+
+
+
+      {ServerNode, Response} -> Response;  % This waits for a response 
 
       {FromNode, _Any}  ->
          io:fwrite("~sReceived unknown request [~p] from node ~w.~n",[?id, _Any, FromNode]),
@@ -108,22 +118,22 @@ serverLoop(InventoryList) ->
 
 % Mapper. Decides location based on direction
 mapper(-1, north) -> loc0; 
-mapper( 0, west)  -> loc1;
-mapper( 0, east)  -> loc5;
-mapper( 0, south) -> loc3;
-mapper( 1, south) -> loc2;
-mapper( 1, east)  -> loc0;
-mapper( 2, east)  -> loc3;
-mapper( 2, north) -> loc1;
-mapper( 3, east)  -> loc4;
-mapper( 3, west)  -> loc2;
-mapper( 3, north) -> loc0;
-mapper( 4, north) -> loc5;
-mapper( 4, west)  -> loc3;
-mapper( 5, north) -> loc6;
-mapper( 5, south) -> loc4;
-mapper( 5, west)  -> loc0;
-mapper( 6, south) -> loc5;
+mapper( loc0, west)  -> loc1;
+mapper( loc0, east)  -> loc5;
+mapper( loc0, south) -> loc3;
+mapper( loc1, south) -> loc2;
+mapper( loc1, east)  -> loc0;
+mapper( loc2, east)  -> loc3;
+mapper( loc2, north) -> loc1;
+mapper( loc3, east)  -> loc4;
+mapper( loc3, west)  -> loc2;
+mapper( loc3, north) -> loc0;
+mapper( loc4, north) -> loc5;
+mapper( loc4, west)  -> loc3;
+mapper( loc5, north) -> loc6;
+mapper( loc5, south) -> loc4;
+mapper( loc5, west)  -> loc0;
+mapper( loc6, south) -> loc5;
 mapper(_, _) -> -1.
 
 
