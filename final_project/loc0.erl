@@ -73,6 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!", []).
+   io_lib:format("(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!", []);
+   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
 
 itemsScattered() -> [brochure, pocketknife].

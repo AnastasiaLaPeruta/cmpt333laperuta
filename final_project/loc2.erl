@@ -73,6 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(2) California: Usually sunny and clear skies, a wildfire creates clouds of smoke that cause low visibility.", []).
+   io_lib:format("(2) California: Usually sunny and clear skies, a wildfire creates clouds of smoke that cause low visibility.", []);
+   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
 
 itemsScattered() -> [water_bottle].

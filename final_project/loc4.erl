@@ -73,6 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(4) Florida: You are in Miami where a tsunami threatens the coast.", []).
+   io_lib:format("(4) Florida: You are in Miami where a tsunami threatens the coast.", []);
+   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
 
 itemsScattered() -> [swimsuit].

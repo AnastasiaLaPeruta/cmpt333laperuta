@@ -73,6 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(6) Canadian Border: You successfully escaped to Canada.", []).
+   io_lib:format("(6) Canadian Border: You successfully escaped to Canada.", []);
+   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
 
 itemsScattered() -> [].

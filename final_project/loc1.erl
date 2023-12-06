@@ -73,6 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(1) Las Vegas, Nevada: You decide to take a break at the casino when the building begins to flood.", []).
+   io_lib:format("(1) Las Vegas, Nevada: You decide to take a break at the casino when the building begins to flood.", []);
+   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
 
 itemsScattered() -> [loose_change, keys].

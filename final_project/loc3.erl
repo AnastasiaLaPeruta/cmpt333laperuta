@@ -73,6 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(3) Texas: You have been given 20 bonus points! Unfortunately, massive tornadoes rip through the state, each a mile wide and you must evacuate.", []).
+   io_lib:format("(3) Texas: You have been given 20 bonus points! Unfortunately, massive tornadoes rip through the state, each a mile wide and you must evacuate.", []);
+   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
 
 itemsScattered() -> [].

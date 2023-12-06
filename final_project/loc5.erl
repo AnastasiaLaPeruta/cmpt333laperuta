@@ -73,6 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(5) North Carolina: You are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []).
+   io_lib:format("(5) North Carolina: You are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean.", []);
+   io_lib:format("~s You see ~w scattered around.", [itemsScattered()).
 
 itemsScattered() -> [compass].
