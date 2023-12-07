@@ -185,29 +185,29 @@ server(ServerNode) ->
       io_lib:format("Talking to game server on node ~w, which is NOT known to be in our cluster, and that may be a problem.", [ServerNode])
    end. % if
 
-go([_Space | Destination], ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
-  DestString = string:to_lower(lists:flatten(Destination)),
-case DestString of
-    "north" -> io:fwrite("Moving north.");
-    "n"     -> io:fwrite("Moving north.");
-    "south" -> io:fwrite("Moving south.");
-    "s"     -> io:fwrite("Moving south.");
-    "east"  -> io:fwrite("Moving east.");
-    "e"     -> io:fwrite("Moving east.");
-    "west"  -> io:fwrite("Moving west.");
-    "w"     -> io:fwrite("Moving west.");
-    _       -> io:fwrite("That is not a direction.")
-end,
+go(Destination, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
+    DestString = string:to_lower(lists:flatten(Destination)),
+    case DestString of
+        "north" -> io:fwrite("Moving north.");
+        "n"     -> io:fwrite("Moving north.");
+        "south" -> io:fwrite("Moving south.");
+        "s"     -> io:fwrite("Moving south.");
+        "east"  -> io:fwrite("Moving east.");
+        "e"     -> io:fwrite("Moving east.");
+        "west"  -> io:fwrite("Moving west.");
+        "w"     -> io:fwrite("Moving west.");
+        _       -> io:fwrite("That is not a direction.")
+    end,
 
+    if (CurrentLocale == 3) ->
+        % adds the 20 point bonus when location 3 is reached
+        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, DestString, InventoryList};
+    true ->
+        % otherwise keeps decreasing score by 10 each move
+        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, DestString, InventoryList}
+    end,
+    ok;
 
-   if (CurrentLocale == 3) ->
-      % adds the 20 point bonus when location 3 is reached
-      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score+20, goToLocation, DestString, InventoryList};
-      % otherwise keeps decreasing score by 10 each move
-   ?else ->
-      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score-10, goToLocation, DestString, InventoryList}
-   end,
-   ok;
 
 go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList) ->
    io_lib:format("Where do you want to go?", []).
