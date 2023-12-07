@@ -39,9 +39,8 @@ start(ServerNode) ->
    io:fwrite(", registered as ~w.~n",[gameClient]),
    % Initialize server monitoring.
    gameClient ! {monitor, ServerNode},
-   processCommand(string:tokens("go north ", " "), GameClientPid, 1, 120, -1, []),
    % -- Begin the play loop
-   playLoop(ServerNode, 2, 110, 0, []).
+   playLoop(ServerNode, 1, 120, 0, []).
 
 
 %---------------------------------
@@ -185,9 +184,8 @@ server(ServerNode) ->
       io_lib:format("Talking to game server on node ~w, which is NOT known to be in our cluster, and that may be a problem.", [ServerNode])
    end. % if
 
-go(Destination, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
-    DestString = string:to_lower(lists:flatten(Destination)),
-    case DestString of
+go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
+    case string:strip(Direction) of
         "north" -> io:fwrite("Moving north.");
         "n"     -> io:fwrite("Moving north.");
         "south" -> io:fwrite("Moving south.");
@@ -201,10 +199,10 @@ go(Destination, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
 
     if (CurrentLocale == 3) ->
         % adds the 20 point bonus when location 3 is reached
-        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, DestString, InventoryList};
+        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, string:strip(Direction), InventoryList};
     true ->
         % otherwise keeps decreasing score by 10 each move
-        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, DestString, InventoryList}
+        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, string:strip(Direction), InventoryList}
     end,
     ok;
 
