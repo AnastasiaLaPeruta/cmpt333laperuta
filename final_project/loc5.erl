@@ -17,7 +17,7 @@ start() ->
 
 start(ServerNode) ->
    % -- Spawn this location process.
-   io:fwrite("~sStarting Location 4 (pid ~w) on node ~w.~n",[?id, self(), node()]),
+   io:fwrite("~sStarting Location 5 (pid ~w) on node ~w.~n",[?id, self(), node()]),
    LocPid = spawn(loc5, locationLoop, []),
    io:fwrite("~sSpawned location with pid ~w",[?id, LocPid]),
    % We want to publish this process in Erlang's process registry.
@@ -54,7 +54,7 @@ locationLoop() ->
       {nodedown, Node} ->
          % This location monitors the server node.
          % The server node has gone down. Notify the admin console...
-         io:fwrite("~sServer node ~w has left our cluster and is no longer reachable. Shutting down.~n",[?id, Node]),
+         io:fwrite("~sServer nodeS ~w has left our cluster and is no longer reachable. Shutting down.~n",[?id, Node]),
          % ...  and shut down.
          exit(normal);
 

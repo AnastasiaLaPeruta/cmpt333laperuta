@@ -185,7 +185,8 @@ server(ServerNode) ->
    end. % if
 
 go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
-    case string:strip(Direction) of
+   NewDir = string:strip(Direction),
+    case NewDir of
         "north" -> io:fwrite("Moving north.");
         "n"     -> io:fwrite("Moving north.");
         "south" -> io:fwrite("Moving south.");
@@ -199,10 +200,10 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
 
     if (CurrentLocale == 3) ->
         % adds the 20 point bonus when location 3 is reached
-        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, string:strip(Direction), InventoryList};
-    true ->
+        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
+    ?else ->
         % otherwise keeps decreasing score by 10 each move
-        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, string:strip(Direction), InventoryList}
+        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
     end,
     ok;
 

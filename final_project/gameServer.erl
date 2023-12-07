@@ -79,27 +79,27 @@ serverLoop(InventoryList) ->
          erase(hd(LocIdList)),            % erase it from our process dictionary.
          serverLoop(InventoryList);
 
-      {FromNode, CurrentLocale, TurnCount, Score, goToLocation, Direction, InventoryList}  ->
-         io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, Direction]),
-         % Look up the Direction in our local process dictionary
-         io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, mapper(CurrentLocale,Direction)]),
-         ClientLocNode = get(mapper(CurrentLocale, Direction)),
+      {FromNode, CurrentLocale, TurnCount, Score, goToLocation, NewDir, InventoryList}  ->
+         io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, NewDir]),
+         %Look up the Direction in our local process dictionary
+         io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, mapper(CurrentLocale,NewDir)]),
+         ClientLocNode = get(mapper(CurrentLocale, NewDir)),
          if ClientLocNode == undefined ->
             io:fwrite("~sNode not found in the local process dictionary.~n", [?id]),
-            % Use only FromPid here because we don't know the registered name of the process (because there is none).
+            %Use only FromPid here because we don't know the registered name of the process (because there is none).
             {gameClient, FromNode} ! {node(), "You cannot go that way."};
          ?else ->
             io:fwrite("~sFound node in the local process dictionary: [~w].~n", [?id, ClientLocNode]),
             {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."},
-            % Tell the Direction on ClientLocNode that a gameClient on FromNode is entering.
-            {Direction, ClientLocNode} ! {self(), enter, FromNode}
+            %Tell the Direction on ClientLocNode that a gameClient on FromNode is entering.
+            {NewDir, ClientLocNode} ! {self(), enter, FromNode}
          end, % if
          serverLoop(InventoryList);
    
 
-      {FromNode, {Num, Direction}} ->
-         mapper(Num, Direction),
-         io:fwrite("~sReceived move from node ~w for direction [~w].~n",[?id, FromNode, Direction]),
+      {FromNode, {Num, NewDir}} ->
+         mapper(Num, NewDir),
+         io:fwrite("~sReceived move from node ~w for direction [~w].~n",[?id, FromNode, NewDir]),
          serverLoop(InventoryList);
 
 
