@@ -5,6 +5,7 @@
 -define(else, true).  % -- This is to make the if statements (somewhat) readable.
 -define(id, "-- game client: ").
 
+-type direction() :: north | south | east | west.
 
 %--------
 % Public
@@ -129,7 +130,7 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    io:fwrite("~s~s~n", [?id, ResultText]),
    %
    % -- Quit or Recurse/Loop.
-   if (ResultAtom == quit orelse CurrentLocale == loc6) ->
+   if (ResultAtom == quit orelse CurrentLocale == 6) ->
       io:fwrite("~sThank you for playing.~n", [?id]);
    ?else ->
      playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
@@ -180,35 +181,36 @@ server(ServerNode) ->
    end. % if
 
 go([_Space | Destination], ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
-    DestAtom = list_to_atom(Destination),
-    io:fwrite("~s[debug] Going [~w].~n", [?id, DestAtom]),
-    % -- Compass directions - Get the new location from the server.
-    case DestAtom of
-      "north" -> move(ServerNode, {CurrentLocale, north});
-      "n"     -> move(ServerNode, {CurrentLocale, north});
-      "south" -> move(ServerNode, {CurrentLocale, south});
-      "s"     -> move(ServerNode, {CurrentLocale, south});
-      "east"  -> move(ServerNode, {CurrentLocale, east});
-      "e"     -> move(ServerNode, {CurrentLocale, east});
-      "west"  -> move(ServerNode, {CurrentLocale, west});
-      "w"     -> move(ServerNode, {CurrentLocale, west});
-      _       -> io:fwrite("That is not a direction.")  
+   DestAtom = list_to_atom(Destination),
+   io:fwrite("~s[debug] Going [~w].~n", [?id, DestAtom]),
+   % -- Compass directions - Get the new location from the server.
+   case DestAtom of
+     north   -> io:fwrite("Moving north.");  %move(GameClientPid, {CurrentLocale, north});
+     n       -> io:fwrite("Moving north.");  %move(GameClientPid, {CurrentLocale, north});
+     south   -> io:fwrite("Moving south.");  %move(GameClientPid, {CurrentLocale, south});
+     s       -> io:fwrite("Moving south.");  %move(GameClientPid, {CurrentLocale, south});
+     east    -> io:fwrite("Moving east.");  %move(GameClientPid, {CurrentLocale, east});
+     e       -> io:fwrite("Moving east.");  %move(GameClientPid, {CurrentLocale, east});
+     west    -> io:fwrite("Moving west.");  %move(GameClientPid, {CurrentLocale, west});
+     w       -> io:fwrite("Moving west.");  %move(GameClientPid, {CurrentLocale, west});
+     _       -> io:fwrite("That is not a direction.")  
    end,
-    if (CurrentLocale == loc3) ->
-        % adds the 20 point bonus when location 3 is reached
-        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, DestAtom, InventoryList};
-        % otherwise keeps decreasing score by 10 each move
-    ?else ->
-        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, DestAtom, InventoryList}
-    end,
-    ok;
+   if (CurrentLocale == 3) ->
+      % adds the 20 point bonus when location 3 is reached
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, DestAtom, InventoryList};
+      % otherwise keeps decreasing score by 10 each move
+   ?else ->
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, DestAtom, InventoryList}
+   end,
+   ok;
 
 go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList) ->
-    io_lib:format("Where do you want to go?", []).
+   io_lib:format("Where do you want to go?", []).
 
 % Send the move message (a tuple) to itself.
-move(ServerPid, MoveTuple) ->
-   ServerPid ! {self(), MoveTuple},
+-spec move(pid(), {integer(), direction()}) -> integer(). %  This is not enforced at runtime. It's for Dializer and Typer.
+move(GameClientPid, MoveTuple) ->
+   GameClientPid ! {self(), MoveTuple},
    receive
-      {ServerPid, Response} -> Response  % This waits for a response from ToPid.
+      {GameClientPid, Response} -> Response  % This waits for a response from ToPid.
    end.

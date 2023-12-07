@@ -103,9 +103,6 @@ serverLoop(InventoryList) ->
          serverLoop(InventoryList);
 
 
-
-      {ServerNode, Response} -> Response;  % This waits for a response 
-
       {FromNode, _Any}  ->
          io:fwrite("~sReceived unknown request [~p] from node ~w.~n",[?id, _Any, FromNode]),
          serverLoop(InventoryList);

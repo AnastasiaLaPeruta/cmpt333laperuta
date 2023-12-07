@@ -17,7 +17,7 @@ start() ->
 
 start(ServerNode) ->
    % -- Spawn this location process.
-   io:fwrite("~sStarting Location 4 (pid ~w) on node ~w.~n",[?id, self(), node()]),
+   io:fwrite("~sStarting Location 6 (pid ~w) on node ~w.~n",[?id, self(), node()]),
    LocPid = spawn(loc6, locationLoop, []),
    io:fwrite("~sSpawned location with pid ~w",[?id, LocPid]),
    % We want to publish this process in Erlang's process registry.
