@@ -99,23 +99,23 @@ dispLocale(CurrentLocale, MapLoc) ->
 
 
 % Mapper. Decides location based on direction
-mapper(-1, north) -> loc0; 
-mapper( 0, west)  -> loc1;
-mapper( 0, east)  -> loc5;
-mapper( 0, south) -> loc3;
-mapper( 1, south) -> loc2;
-mapper( 1, east)  -> loc0;
-mapper( 2, east)  -> loc3;
-mapper( 2, north) -> loc1;
-mapper( 3, east)  -> loc4;
-mapper( 3, west)  -> loc2;
-mapper( 3, north) -> loc0;
-mapper( 4, north) -> loc5;
-mapper( 4, west)  -> loc3;
-mapper( 5, north) -> loc6;
-mapper( 5, south) -> loc4;
-mapper( 5, west)  -> loc0;
-mapper( 6, south) -> loc5;
+mapper(-1, "north") -> 0; 
+mapper( 0, "west")  -> 1;
+mapper( 0, "east")  -> 5;
+mapper( 0, "south") -> 3;
+mapper( 1, "south") -> 2;
+mapper( 1, "east")  -> 0;
+mapper( 2, "east")  -> 3;
+mapper( 2, "north") -> 1;
+mapper( 3, "east")  -> 4;
+mapper( 3, "west")  -> 2;
+mapper( 3, "north") -> 0;
+mapper( 4, "north") -> 5;
+mapper( 4, "west")  -> 3;
+mapper( 5, "north") -> 6;
+mapper( 5, "south") -> 4;
+mapper( 5, "west")  -> 0;
+mapper( 6, "south") -> 5;
 mapper(_, _) -> -1.
 
 playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
@@ -132,12 +132,17 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    %
    % -- Update the display.
    io:fwrite("~s~s~n", [?id, ResultText]),
+   Command = lists:sublist(Line, length(Line)-1),  % (Because Line is a character list ending with a linefeed.)
+   % 2. Break the line into two parts: before the space and after the space (if there's even a space)
+   Verb = lists:takewhile( fun(Element) -> Element /= 32 end, Command),
+   Noun = lists:dropwhile( fun(Element) -> Element /= 32 end, Command),
+   NewLocale = mapper(CurrentLocale, string:strip(Noun)),
    %
    % -- Quit or Recurse/Loop.
-   if (ResultAtom == quit orelse CurrentLocale == 6) ->
+   if (ResultAtom == quit orelse NewLocale == 6) ->
       io:fwrite("~sThank you for playing.~n", [?id]);
    ?else ->
-     playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
+     playLoop(ServerNode, TurnCount, Score, NewLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
    end. % if
 
 
@@ -187,23 +192,24 @@ server(ServerNode) ->
 go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    NewDir = string:strip(Direction),
     case NewDir of
-        "north" -> io:fwrite("Moving north.");
-        "n"     -> io:fwrite("Moving north.");
-        "south" -> io:fwrite("Moving south.");
-        "s"     -> io:fwrite("Moving south.");
-        "east"  -> io:fwrite("Moving east.");
-        "e"     -> io:fwrite("Moving east.");
-        "west"  -> io:fwrite("Moving west.");
-        "w"     -> io:fwrite("Moving west.");
-        _       -> io:fwrite("That is not a direction.")
+        "north" -> io:fwrite("Moving north.~n");
+        "n"     -> io:fwrite("Moving north.~n");
+        "south" -> io:fwrite("Moving south.~n");
+        "s"     -> io:fwrite("Moving south.~n");
+        "east"  -> io:fwrite("Moving east.~n");
+        "e"     -> io:fwrite("Moving east.~n");
+        "west"  -> io:fwrite("Moving west.~n");
+        "w"     -> io:fwrite("Moving west.~n");
+        _       -> io:fwrite("That is not a direction.~n")
     end,
-
-    if (CurrentLocale == 3) ->
+    NewLocale = mapper(CurrentLocale,NewDir),
+    io:fwrite("~s", [showMap(NewLocale)]),
+    if (NewLocale == 3) ->
         % adds the 20 point bonus when location 3 is reached
-        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
+        {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
     ?else ->
         % otherwise keeps decreasing score by 10 each move
-        {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
+        {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
     end,
     ok;
 

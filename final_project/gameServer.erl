@@ -79,26 +79,26 @@ serverLoop(InventoryList) ->
          erase(hd(LocIdList)),            % erase it from our process dictionary.
          serverLoop(InventoryList);
 
-      {FromNode, CurrentLocale, TurnCount, Score, goToLocation, NewDir, NewInventoryList}  ->
+      {FromNode, NewLocale, TurnCount, Score, goToLocation, NewDir, NewInventoryList}  ->
          io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, NewDir]),
          %Look up the Direction in our local process dictionary
-         io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, mapper(CurrentLocale,NewDir)]),
-         ClientLocNode = get(mapper(CurrentLocale, NewDir)),
+         io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, translateToLoc(NewLocale)]),
+         ClientLocNode = translateToLoc(NewLocale),
          if ClientLocNode == undefined ->
+            io:fwrite(ClientLocNode),
             io:fwrite("~sNode not found in the local process dictionary.~n", [?id]),
             %Use only FromPid here because we don't know the registered name of the process (because there is none).
             {gameClient, FromNode} ! {node(), "You cannot go that way."};
          ?else ->
             io:fwrite("~sFound node in the local process dictionary: [~w].~n", [?id, ClientLocNode]),
-            {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."},
-            %Tell the Direction on ClientLocNode that a gameClient on FromNode is entering.
-            {NewDir, ClientLocNode} ! {self(), enter, FromNode}
+            {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."}
+            %Tell the NewDir on ClientLocNode that a gameClient on FromNode is entering.
+            %{NewDir, ClientLocNode} ! {self(), enter, FromNode}
          end, % if
          serverLoop(NewInventoryList);
    
 
       {FromNode, {Num, NewDir}} ->
-         mapper(Num, NewDir),
          io:fwrite("~sReceived move from node ~w for direction [~w].~n",[?id, FromNode, NewDir]),
          serverLoop(InventoryList);
 
@@ -119,24 +119,14 @@ serverLoop(InventoryList) ->
 
 
 % Mapper. Decides location based on direction
-mapper(-1, north) -> loc0; 
-mapper( loc0, west)  -> loc1;
-mapper( loc0, east)  -> loc5;
-mapper( loc0, south) -> loc3;
-mapper( loc1, south) -> loc2;
-mapper( loc1, east)  -> loc0;
-mapper( loc2, east)  -> loc3;
-mapper( loc2, north) -> loc1;
-mapper( loc3, east)  -> loc4;
-mapper( loc3, west)  -> loc2;
-mapper( loc3, north) -> loc0;
-mapper( loc4, north) -> loc5;
-mapper( loc4, west)  -> loc3;
-mapper( loc5, north) -> loc6;
-mapper( loc5, south) -> loc4;
-mapper( loc5, west)  -> loc0;
-mapper( loc6, south) -> loc5;
-mapper(_, _) -> -1.
+translateToLoc(0) -> loc0; 
+translateToLoc(1)  -> loc1;
+translateToLoc(2)  -> loc2;
+translateToLoc(3) -> loc3;
+translateToLoc(4) -> loc4;
+translateToLoc(5)  -> loc5;
+translateToLoc(6)  -> loc6;
+translateToLoc(_) -> -1.
 
 
 
