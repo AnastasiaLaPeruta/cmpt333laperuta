@@ -4,8 +4,12 @@
 -author('Anastasia M. LaPeruta').
 -define(else, true).  % -- This is to make the if statements (somewhat) readable.
 -define(id, "-- game client: ").
+-define(goToLocation, goToLocation).
+
+
 
 -type direction() :: north | south | east | west.
+
 
 %--------
 % Public
@@ -35,8 +39,9 @@ start(ServerNode) ->
    io:fwrite(", registered as ~w.~n",[gameClient]),
    % Initialize server monitoring.
    gameClient ! {monitor, ServerNode},
+   processCommand(string:tokens("go north ", " "), GameClientPid, 1, 120, -1, []),
    % -- Begin the play loop
-   playLoop(ServerNode, 1, 120, 0, []).
+   playLoop(ServerNode, 2, 110, 0, []).
 
 
 %---------------------------------
@@ -181,26 +186,26 @@ server(ServerNode) ->
    end. % if
 
 go([_Space | Destination], ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
-   DestAtom = list_to_atom(Destination),
-   io:fwrite("~s[debug] Going [~w].~n", [?id, DestAtom]),
-   % -- Compass directions - Get the new location from the server.
-   case DestAtom of
-     north   -> io:fwrite("Moving north.");  %move(GameClientPid, {CurrentLocale, north});
-     n       -> io:fwrite("Moving north.");  %move(GameClientPid, {CurrentLocale, north});
-     south   -> io:fwrite("Moving south.");  %move(GameClientPid, {CurrentLocale, south});
-     s       -> io:fwrite("Moving south.");  %move(GameClientPid, {CurrentLocale, south});
-     east    -> io:fwrite("Moving east.");  %move(GameClientPid, {CurrentLocale, east});
-     e       -> io:fwrite("Moving east.");  %move(GameClientPid, {CurrentLocale, east});
-     west    -> io:fwrite("Moving west.");  %move(GameClientPid, {CurrentLocale, west});
-     w       -> io:fwrite("Moving west.");  %move(GameClientPid, {CurrentLocale, west});
-     _       -> io:fwrite("That is not a direction.")  
-   end,
+  DestString = string:to_lower(lists:flatten(Destination)),
+case DestString of
+    "north" -> io:fwrite("Moving north.");
+    "n"     -> io:fwrite("Moving north.");
+    "south" -> io:fwrite("Moving south.");
+    "s"     -> io:fwrite("Moving south.");
+    "east"  -> io:fwrite("Moving east.");
+    "e"     -> io:fwrite("Moving east.");
+    "west"  -> io:fwrite("Moving west.");
+    "w"     -> io:fwrite("Moving west.");
+    _       -> io:fwrite("That is not a direction.")
+end,
+
+
    if (CurrentLocale == 3) ->
       % adds the 20 point bonus when location 3 is reached
-      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score + 20, goToLocation, DestAtom, InventoryList};
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score+20, goToLocation, DestString, InventoryList};
       % otherwise keeps decreasing score by 10 each move
    ?else ->
-      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount + 1, Score - 10, goToLocation, DestAtom, InventoryList}
+      {gameServer, ServerNode} ! {node(), CurrentLocale, TurnCount+1, Score-10, goToLocation, DestString, InventoryList}
    end,
    ok;
 

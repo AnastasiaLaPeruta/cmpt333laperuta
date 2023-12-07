@@ -109,8 +109,13 @@ serverLoop(InventoryList) ->
 
       {FromNode, _Any1, _Any2}  ->
          io:fwrite("~sReceived unknown request [~p, ~p] from node ~w.~n",[?id, _Any1, _Any2, FromNode]),
+         serverLoop(InventoryList);
+   
+      AnyOther -> 
+         io:fwrite("~sReceived unexpected message: ~p~n", [?id, AnyOther]),
          serverLoop(InventoryList)
    end.
+
 
 
 % Mapper. Decides location based on direction
