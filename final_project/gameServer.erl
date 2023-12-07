@@ -79,7 +79,7 @@ serverLoop(InventoryList) ->
          erase(hd(LocIdList)),            % erase it from our process dictionary.
          serverLoop(InventoryList);
 
-      {FromNode, CurrentLocale, TurnCount, Score, goToLocation, NewDir, InventoryList}  ->
+      {FromNode, CurrentLocale, TurnCount, Score, goToLocation, NewDir, NewInventoryList}  ->
          io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, NewDir]),
          %Look up the Direction in our local process dictionary
          io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, mapper(CurrentLocale,NewDir)]),
@@ -94,7 +94,7 @@ serverLoop(InventoryList) ->
             %Tell the Direction on ClientLocNode that a gameClient on FromNode is entering.
             {NewDir, ClientLocNode} ! {self(), enter, FromNode}
          end, % if
-         serverLoop(InventoryList);
+         serverLoop(NewInventoryList);
    
 
       {FromNode, {Num, NewDir}} ->
