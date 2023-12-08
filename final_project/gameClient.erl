@@ -202,7 +202,7 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
         "w"     -> io:fwrite("Moving west.~n");
         _       -> io:fwrite("That is not a direction.~n")
     end,
-    NewLocale = mapper(CurrentLocale,NewDir),
+    NewLocale = translateToLoc(mapper(CurrentLocale,NewDir)),
     io:fwrite("~s", [showMap(NewLocale)]),
     if (NewLocale == 3) ->
         % adds the 20 point bonus when location 3 is reached
@@ -210,6 +210,7 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
     ?else ->
         % otherwise keeps decreasing score by 10 each move
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
+
     end,
     ok;
 
@@ -224,3 +225,13 @@ move(GameClientPid, MoveTuple) ->
    receive
       {GameClientPid, Response} -> Response  % This waits for a response from ToPid.
    end.
+
+% Mapper. Decides location based on direction
+translateToLoc(0) -> loc0; 
+translateToLoc(1)  -> loc1;
+translateToLoc(2)  -> loc2;
+translateToLoc(3) -> loc3;
+translateToLoc(4) -> loc4;
+translateToLoc(5)  -> loc5;
+translateToLoc(6)  -> loc6;
+translateToLoc(_) -> undefined.

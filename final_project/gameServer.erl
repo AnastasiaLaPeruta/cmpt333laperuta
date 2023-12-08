@@ -83,7 +83,7 @@ serverLoop(InventoryList) ->
          io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, NewDir]),
          %Look up the Direction in our local process dictionary
          io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, translateToLoc(NewLocale)]),
-         ClientLocNode = translateToLoc(NewLocale),
+         ClientLocNode = get(NewLocale),
          if ClientLocNode == undefined ->
             io:fwrite(ClientLocNode),
             io:fwrite("~sNode not found in the local process dictionary.~n", [?id]),
@@ -93,7 +93,7 @@ serverLoop(InventoryList) ->
             io:fwrite("~sFound node in the local process dictionary: [~w].~n", [?id, ClientLocNode]),
             {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."},
             %Tell the ClientLocId on ClientLocNode that a gameClient on FromNode is entering.
-            ClientLocId = translateToLoc(NewLocale),
+            ClientLocId = NewLocale,
             {ClientLocId, ClientLocNode} ! {node(), enter, FromNode}
          end, % if
          serverLoop(NewInventoryList);

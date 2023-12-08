@@ -60,7 +60,7 @@ locationLoop() ->
 
       {_FromNode, enter, GameClientNode}  ->
          io:fwrite("~sA gameClient on ~w is entering loc4.~n",[?id, GameClientNode]),
-         {gameClient, GameClientNode} ! {node(), describe()},
+         {gameClient, GameClientNode} ! {node(),  unicode:characters_to_binary(describe())},
          locationLoop();
 
       {FromNode, _Any}  ->
@@ -73,7 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(4) Florida: You are in Miami where a tsunami threatens the coast.", []),
-   io_lib:format("You see ~w scattered around.", [itemsScattered()]).
+   io_lib:format("(4) Florida: You are in Miami where a tsunami threatens the coast. You see ~w scattered around.", [itemsScattered()]).
+
 
 itemsScattered() -> [swimsuit].

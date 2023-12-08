@@ -60,7 +60,7 @@ locationLoop() ->
 
       {_FromNode, enter, GameClientNode}  ->
          io:fwrite("~sA gameClient on ~w is entering loc0.~n",[?id, GameClientNode]),
-         {gameClient, GameClientNode} ! {node(), describe()},
+         {gameClient, GameClientNode} ! {node(), unicode:characters_to_binary(describe())},
          locationLoop();
 
       {FromNode, _Any}  ->
@@ -73,7 +73,7 @@ locationLoop() ->
 % Private
 %--------
 describe() ->
-   io_lib:format("(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!", []),
-   io_lib:format("You see ~w scattered around.", [itemsScattered()]).
+   io_lib:format("(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick! You see ~w scattered around.", [itemsScattered()]).
+
 
 itemsScattered() -> [brochure, pocketknife].
