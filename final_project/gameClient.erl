@@ -1,25 +1,16 @@
 % gameClient.erl - A Distributed Adventure Game Client
-
 -module(gameClient).
 -author('Anastasia M. LaPeruta').
 -define(else, true).  % -- This is to make the if statements (somewhat) readable.
 -define(id, "-- game client: ").
 -define(goToLocation, goToLocation).
-
-
-
 -type direction() :: north | south | east | west.
-
-
 %--------
 % Public
 %--------
-
 -export([start/0, start/1]).
-
 start() ->
    io:fwrite("You must supply a game sever node.~n", []).
-
 start(ServerNode) ->
    % -- Spawn this game client process.
    io:fwrite("~sStarting Distributed Adventure Game Client (pid ~w) on node ~w.~n",[?id, self(), node()]),
@@ -41,8 +32,6 @@ start(ServerNode) ->
    gameClient ! {monitor, ServerNode},
    % -- Begin the play loop
    playLoop(ServerNode, 0, 120, 0, [], 0).
-
-
 %---------------------------------
 % Private, but accepting messages.
 %---------------------------------
@@ -52,7 +41,6 @@ clientLoop() ->
          io:fwrite("~sMonitoring game server on node ~w.~n",[?id, ServerNode]),
          monitor_node(ServerNode, true),
          clientLoop();
-
       {nodedown, Node} ->
          % This client monitors the server node.
          % The server node has gone down. Notify the admin console...
@@ -60,18 +48,13 @@ clientLoop() ->
          % ...  and shut down.
          % TODO: exit the playLoop too.
          exit(normal);
-
       {FromNode, _Any, TurnCount, Score}  ->
          io:fwrite("~sReceived message [~p] from node ~w.~n",[?id, _Any, FromNode]),
          clientLoop()
    end.
-
-
 %---------
 % Private
 %---------
-
-
 % Show map. Double-check with mapper().
 showMap(CurrentLocale) ->
    io_lib:format("................... ~n",    []) ++
@@ -83,21 +66,12 @@ showMap(CurrentLocale) ->
    io_lib:format(".. |.... | ... | .. ~n",    []) ++
    io_lib:format(".. ~s --- ~s --- ~s .. ~n",  [dispLocale(CurrentLocale, 2), dispLocale(CurrentLocale, 3), dispLocale(CurrentLocale, 4)]) ++
    io_lib:format("................... ~n",    []).
-
-
 dispLocale(CurrentLocale, MapLoc) ->
    if CurrentLocale == MapLoc ->
       "@";
    ?else ->
       integer_to_list(MapLoc)  % Remember, strings are lists of ASCII/Unicode values in Erlang.
    end.
-
-
-
-
-
-
-
 % Mapper. Decides location based on direction 
 % all cases to make sure player does not go out of bounds
 mapper(-1, "north") -> 0; 
@@ -105,43 +79,34 @@ mapper( 0, "west")  -> 1;
 mapper( 0, "east")  -> 5;
 mapper( 0, "south") -> 3;
 mapper( 0, "north") -> 0;
-
 mapper( 1, "south") -> 2;
 mapper( 1, "east")  -> 0;
 mapper( 1, "north")  -> 1;
 mapper( 1, "west")  -> 1;
-
 mapper( 2, "east")  -> 3;
 mapper( 2, "north") -> 1;
 mapper( 2, "south") -> 2;
 mapper( 2, "west") -> 2;
-
 mapper( 3, "east")  -> 4;
 mapper( 3, "west")  -> 2;
 mapper( 3, "north") -> 0;
 mapper( 3, "south") -> 3;
-
 mapper( 4, "north") -> 5;
 mapper( 4, "west")  -> 3;
 mapper( 4, "south")  -> 4;
 mapper( 4, "east")  -> 4;
-
 mapper( 5, "north") -> 6;
 mapper( 5, "south") -> 4;
 mapper( 5, "west")  -> 0;
 mapper( 5, "east") -> 5;
-
-
 mapper( 6, "south") -> 5;
 mapper( 6, "north") -> 6;
 mapper( 6, "west") -> 6;
 mapper( 6, "east") -> 6;
-
 mapper(_, _) -> -1.
-
 playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    % -- Get a line of input from the user.
-   showMap(CurrentLocale),
+   io:fwrite("~s", [showMap(CurrentLocale)]),
    % doesn't let score fall below 0
    if (Score >= 0) ->
       io:fwrite("~nScore=~w  Turn ~w ] ", [Score-20, TurnCount+1]);
@@ -150,27 +115,25 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
    end,
    Line = io:get_line(io_lib:format("~s[play] Enter action or help -] ", [?id])),  % Line is returned as a string.
    {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale),
-   % Update the display.
-   io:fwrite("~s~s~n", [?id, ResultText]),
-   Command = lists:sublist(Line, length(Line)-1),
-   Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
-   Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
-   NewLoc = mapper(CurrentLocale, string:strip(Noun)),
-   % Quit or Recurse/Loop.
-   if (ResultAtom == quit orelse NewLoc == 6) ->
-      io:fwrite("~s", [showMap(NewLoc)]),
-      io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
-   ?else ->
-      io:fwrite("~s", [showMap(NewLoc)]),
-      playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
-   end.
-
-
-
-
-
-
-
+    %
+    % Update the display.
+    io:fwrite("~s~s~n", [?id, ResultText]),
+    Command = lists:sublist(Line, length(Line)-1),
+    Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
+    Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
+    NewLocale = mapper(CurrentLocale, string:strip(Noun)),
+    %
+    % Quit or Recurse/Loop.
+    if (ResultAtom == quit orelse NewLocale == 6) ->
+        NewLocale = mapper(CurrentLocale, string:strip(Noun)),
+        io:fwrite("~s", [showMap(NewLocale)]),
+        io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
+    ?else ->
+        if not is_integer(ResultAtom) ->
+            io:fwrite("~s", [showMap(OriginalLocale)])
+        end,
+        playLoop(ServerNode, TurnCount+1, Score-10, NewLocale, InventoryList, OriginalLocale)
+    end.
 processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    % Do some elementary parsing of the line in two parts:
    % 1. Remove the trailing newline charater.
@@ -194,18 +157,13 @@ processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList,
       % -- Otherwise...
       _Else      -> {unknownCommand, "I do  not understand that command."}
    end.
-
 showInventory([])            -> io_lib:format("You are not carrying anything of use.", []);
 showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [lists:usort(InventoryList)]).
-
-
 helpText() ->
    io_lib:format("Commands: [help], [inventory], [show map], [quit], [nodes], [server], [go <location>]", []).
-
 listNodes() ->
    io_lib:format("This node: ~w~n", [node()]) ++   % No ?id here because it will be supplied when printed above.
    io_lib:format("~sOther nodes in our cluster: ~w", [?id, nodes()]).
-
 server(ServerNode) ->
    KnownNode = lists:member(ServerNode, nodes()),
    if KnownNode ->
@@ -213,7 +171,6 @@ server(ServerNode) ->
    ?else ->
       io_lib:format("Talking to game server on node ~w, which is NOT known to be in our cluster, and that may be a problem.", [ServerNode])
    end. % if
-
 go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    NewDir = string:strip(Direction),
     case NewDir of
@@ -240,12 +197,8 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, Origin
         end
     end,
     ok;
-
-
 go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList, _OriginalLocale) ->
    io_lib:format("Where do you want to go?", []).
-
-
 % Mapper. Decides location based on direction
 translateToLoc(0) -> loc0; 
 translateToLoc(1)  -> loc1;
