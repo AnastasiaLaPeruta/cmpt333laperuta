@@ -192,14 +192,14 @@ server(ServerNode) ->
 go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    NewDir = string:strip(Direction),
     case NewDir of
-        "north" -> io:fwrite("Moving north.~n");
-        "n"     -> io:fwrite("Moving north.~n");
-        "south" -> io:fwrite("Moving south.~n");
-        "s"     -> io:fwrite("Moving south.~n");
-        "east"  -> io:fwrite("Moving east.~n");
-        "e"     -> io:fwrite("Moving east.~n");
-        "west"  -> io:fwrite("Moving west.~n");
-        "w"     -> io:fwrite("Moving west.~n");
+        "north" -> io:fwrite("");
+        "n"     -> io:fwrite("");
+        "south" -> io:fwrite("");
+        "s"     -> io:fwrite("");
+        "east"  -> io:fwrite("");
+        "e"     -> io:fwrite("");
+        "west"  -> io:fwrite("");
+        "w"     -> io:fwrite("");
         _       -> io:fwrite("That is not a direction.~n")
     end,
    NewLocale = translateToLoc(mapper(CurrentLocale,NewDir)),
@@ -207,7 +207,7 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
         % adds the 20 point bonus when location 3 is reached
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
     ?else ->
-      if (NewLocale == undefined) ->
+      if (NewLocale == undefined), (not is_integer(NewLocale)) ->  % if input doesnt result in location on map or is invalid input
          playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList);
       ?else ->
         % otherwise keeps decreasing score by 10 each move
