@@ -40,7 +40,7 @@ start(ServerNode) ->
    % Initialize server monitoring.
    gameClient ! {monitor, ServerNode},
    % -- Begin the play loop
-   playLoop(ServerNode, 1, 120, 0, []).
+   playLoop(ServerNode, 0, 120, 0, []).
 
 
 %---------------------------------
@@ -98,7 +98,8 @@ dispLocale(CurrentLocale, MapLoc) ->
 
 
 
-% Mapper. Decides location based on direction
+% Mapper. Decides location based on direction 
+% all cases to make sure player does not go out of bounds
 mapper(-1, "north") -> 0; 
 mapper( 0, "west")  -> 1;
 mapper( 0, "east")  -> 5;
@@ -123,9 +124,9 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    io:fwrite("~s", [showMap(CurrentLocale)]),
    % doesn't let score fall below 0
    if (Score >= 0) ->
-      io:fwrite("~nScore=~w  Turn ~w ] ", [Score, TurnCount]);
+      io:fwrite("~nScore=~w  Turn ~w ] ", [Score-20, TurnCount+1]);
    ?else ->
-      io:fwrite("~nScore=~w  Turn ~w ] ", [0, TurnCount])
+      io:fwrite("~nScore=~w  Turn ~w ] ", [0, TurnCount+1])
    end,
    Line = io:get_line(io_lib:format("~s[play] Enter action or help -] ", [?id])),  % Line is returned as a string.
    {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList),
@@ -142,7 +143,7 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    if (ResultAtom == quit orelse NewLocale == 6) ->
       io:fwrite("~sThank you for playing.~n", [?id]);
    ?else ->
-     playLoop(ServerNode, TurnCount, Score, NewLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
+     playLoop(ServerNode, TurnCount+1, Score-10, NewLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
    end. % if
 
 
