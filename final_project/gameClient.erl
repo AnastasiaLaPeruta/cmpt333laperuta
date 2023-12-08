@@ -165,6 +165,8 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
         io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
     ?else ->
         if not is_integer(ResultAtom) ->
+            io:fwrite("~s", [showMap(CurrentLocale)]); % displays last location and not process atom for non-direction commands 
+        ?else ->
             io:fwrite("~s", [showMap(NewLoc)])
         end,
         playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
