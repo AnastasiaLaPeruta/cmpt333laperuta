@@ -40,7 +40,7 @@ start(ServerNode) ->
    % Initialize server monitoring.
    gameClient ! {monitor, ServerNode},
    % -- Begin the play loop
-   playLoop(ServerNode, 0, 120, 0, []).
+   playLoop(ServerNode, 0, 120, 0, [], 0).
 
 
 %---------------------------------
@@ -139,7 +139,7 @@ mapper( 6, "east") -> 6;
 
 mapper(_, _) -> -1.
 
-playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
+playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    % -- Get a line of input from the user.
    io:fwrite("~s", [showMap(CurrentLocale)]),
    % doesn't let score fall below 0
@@ -149,26 +149,28 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
       io:fwrite("~nScore=~w  Turn ~w ] ", [0, TurnCount+1])
    end,
    Line = io:get_line(io_lib:format("~s[play] Enter action or help -] ", [?id])),  % Line is returned as a string.
-   {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList),
-   %
-   % -- Update the display.
-   io:fwrite("~s~s~n", [?id, ResultText]),
-   Command = lists:sublist(Line, length(Line)-1),  % (Because Line is a character list ending with a linefeed.)
-   % 2. Break the line into two parts: before the space and after the space (if there's even a space)
-   Verb = lists:takewhile( fun(Element) -> Element /= 32 end, Command),
-   Noun = lists:dropwhile( fun(Element) -> Element /= 32 end, Command),
-   NewLocale = mapper(CurrentLocale, string:strip(Noun)),
-   %
-   % -- Quit or Recurse/Loop.
-   if (ResultAtom == quit orelse NewLocale == 6) ->
-      io:fwrite("~s", [showMap(NewLocale)]),
-      io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
-   ?else ->
-     playLoop(ServerNode, TurnCount+1, Score-10, NewLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
-   end. % if
+   {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale),
+    %
+    % Update the display.
+    io:fwrite("~s~s~n", [?id, ResultText]),
+    Command = lists:sublist(Line, length(Line)-1),
+    Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
+    Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
+    NewLocale = mapper(CurrentLocale, string:strip(Noun)),
+    %
+    % Quit or Recurse/Loop.
+    if (ResultAtom == quit orelse NewLocale == 6) ->
+        io:fwrite("~s", [showMap(NewLocale)]),
+        io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
+    ?else ->
+        if not is_integer(ResultAtom) ->
+            io:fwrite("~s", [showMap(OriginalLocale)])
+        end,
+        playLoop(ServerNode, TurnCount+1, Score-10, NewLocale, InventoryList, OriginalLocale)
+    end.
 
 
-processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
+processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    % Do some elementary parsing of the line in two parts:
    % 1. Remove the trailing newline charater.
    Command = lists:sublist(Line, length(Line)-1),  % (Because Line is a character list ending with a linefeed.)
@@ -182,7 +184,7 @@ processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)
       "q"        -> {quit,   "Quitting."};
       "nodes"    -> {nodes,  listNodes()};
       "server"   -> {server, server(ServerNode)};
-      "go"       -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)};
+      "go"       -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale)};
       "h"        -> {CurrentLocale, helpText()};
       "map"      -> {CurrentLocale, showMap(CurrentLocale)};
       "show map" -> {CurrentLocale, showMap(CurrentLocale)};
@@ -197,7 +199,7 @@ showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [lists:uso
 
 
 helpText() ->
-   io_lib:format("Commands: [help], [quit], [nodes], [server], [go <location>]", []).
+   io_lib:format("Commands: [help], [inventory], [show map], [quit], [nodes], [server], [go <location>]", []).
 
 listNodes() ->
    io_lib:format("This node: ~w~n", [node()]) ++   % No ?id here because it will be supplied when printed above.
@@ -211,7 +213,7 @@ server(ServerNode) ->
       io_lib:format("Talking to game server on node ~w, which is NOT known to be in our cluster, and that may be a problem.", [ServerNode])
    end. % if
 
-go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
+go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    NewDir = string:strip(Direction),
     case NewDir of
         "north" -> io:fwrite("");
@@ -230,7 +232,7 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
     ?else ->
       if (NewLocale == undefined), (not is_integer(NewLocale)) ->  % if input doesnt result in location on map or is invalid input
-         playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList);
+         playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale);
       ?else ->
         % otherwise keeps decreasing score by 10 each move
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
@@ -239,16 +241,9 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
     ok;
 
 
-go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList) ->
+go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList, _OriginalLocale) ->
    io_lib:format("Where do you want to go?", []).
 
-% Send the move message (a tuple) to itself.
--spec move(pid(), {integer(), direction()}) -> integer(). %  This is not enforced at runtime. It's for Dializer and Typer.
-move(GameClientPid, MoveTuple) ->
-   GameClientPid ! {self(), MoveTuple},
-   receive
-      {GameClientPid, Response} -> Response  % This waits for a response from ToPid.
-   end.
 
 % Mapper. Decides location based on direction
 translateToLoc(0) -> loc0; 
