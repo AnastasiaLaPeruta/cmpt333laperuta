@@ -124,13 +124,19 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
     NewLoc = mapper(CurrentLocale, string:strip(Noun)),
     %
     % Quit or Recurse/Loop.
-    if (ResultAtom == quit orelse NewLoc == 6) ->
+    if (ResultAtom == quit orelse ResultAtom == q orelse ResultAtom == help orelse NewLoc == 6 orelse ResultAtom == nodes orelse ResultAtom == server orelse ResultAtom == inventory orelse ResultAtom == map) ->
         NewLoc = mapper(CurrentLocale, string:strip(Noun)),
-        io:fwrite("~s", [showMap(NewLoc)]),
-        io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
+        if 
+         (NewLoc == 6) ->  
+            io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
+         (ResultAtom == quit orelse ResultAtom == quit) ->
+            io:fwrite("~s Thank you for playing.~n", [?id]);
+         ?else ->
+            playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
+         end;
     ?else ->
         if not is_integer(ResultAtom) ->
-            io:fwrite("~s", [showMap(NewLoc)])
+            io:fwrite("")
         end,
         playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
     end.
@@ -149,18 +155,15 @@ processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList,
       "nodes"    -> {nodes,  listNodes()};
       "server"   -> {server, server(ServerNode)};
       "go"       -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale)};
-      "h"        -> {CurrentLocale, helpText()};
       "map"      -> {CurrentLocale, showMap(CurrentLocale)};
-      "show map" -> {CurrentLocale, showMap(CurrentLocale)};
       "inventory"-> {CurrentLocale, showInventory(InventoryList)};
-      "i"        -> {CurrentLocale, showInventory(InventoryList)};
       % -- Otherwise...
       _Else      -> {unknownCommand, "I do  not understand that command."}
    end.
 showInventory([])            -> io_lib:format("You are not carrying anything of use.", []);
 showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [lists:usort(InventoryList)]).
 helpText() ->
-   io_lib:format("Commands: [help], [inventory], [show map], [quit], [nodes], [server], [go <location>]", []).
+   io_lib:format("Commands: [help], [inventory], [map], [quit], [nodes], [server], [go <location>]", []).
 listNodes() ->
    io_lib:format("This node: ~w~n", [node()]) ++   % No ?id here because it will be supplied when printed above.
    io_lib:format("~sOther nodes in our cluster: ~w", [?id, nodes()]).
