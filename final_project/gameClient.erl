@@ -104,19 +104,39 @@ mapper(-1, "north") -> 0;
 mapper( 0, "west")  -> 1;
 mapper( 0, "east")  -> 5;
 mapper( 0, "south") -> 3;
+mapper( 0, "north") -> 0;
+
 mapper( 1, "south") -> 2;
 mapper( 1, "east")  -> 0;
+mapper( 1, "north")  -> 1;
+mapper( 1, "west")  -> 1;
+
 mapper( 2, "east")  -> 3;
 mapper( 2, "north") -> 1;
+mapper( 2, "south") -> 2;
+mapper( 2, "west") -> 2;
+
 mapper( 3, "east")  -> 4;
 mapper( 3, "west")  -> 2;
 mapper( 3, "north") -> 0;
+mapper( 3, "south") -> 3;
+
 mapper( 4, "north") -> 5;
 mapper( 4, "west")  -> 3;
+mapper( 4, "south")  -> 4;
+mapper( 4, "east")  -> 4;
+
 mapper( 5, "north") -> 6;
 mapper( 5, "south") -> 4;
 mapper( 5, "west")  -> 0;
+mapper( 5, "east") -> 5;
+
+
 mapper( 6, "south") -> 5;
+mapper( 6, "north") -> 6;
+mapper( 6, "west") -> 6;
+mapper( 6, "east") -> 6;
+
 mapper(_, _) -> -1.
 
 playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
