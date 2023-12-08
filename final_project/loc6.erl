@@ -58,9 +58,9 @@ locationLoop() ->
          % ...  and shut down.
          exit(normal);
 
-      {_FromNode, enter, GameClientNode}  ->
+      {_FromNode, enter, GameClientNode, TurnCount, Score}  ->
          io:fwrite("~sA gameClient on ~w is entering loc6.~n",[?id, GameClientNode]),
-         {gameClient, GameClientNode} ! {node(),  unicode:characters_to_binary(describe())},
+         {gameClient, GameClientNode} ! {node(),  unicode:characters_to_binary(describe()), TurnCount, Score},
          locationLoop();
 
       {FromNode, _Any}  ->

@@ -58,17 +58,14 @@ locationLoop() ->
          % ...  and shut down.
          exit(normal);
 
-      {_FromNode, enter, GameClientNode}  ->
+      {_FromNode, enter, GameClientNode, TurnCount, Score}  ->
          io:fwrite("~sA gameClient on ~w is entering loc5.~n",[?id, GameClientNode]),
-         {gameClient, GameClientNode} ! {node(), unicode:characters_to_binary(describe())}, %translate so there is no unicode
+         {gameClient, GameClientNode} ! {node(), unicode:characters_to_binary(describe()), TurnCount, Score}, %translate so there is no unicode
          locationLoop();
 
       {FromNode, _Any}  ->
          io:fwrite("~sReceived request [~p] from node ~w.~n",[?id, _Any, FromNode]),
-         locationLoop();
-
-      AnyOther ->
-         io:fwrite("testing for receive")
+         locationLoop()
    end.
 
 

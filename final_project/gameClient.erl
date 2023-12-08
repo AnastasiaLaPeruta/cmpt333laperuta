@@ -61,7 +61,7 @@ clientLoop() ->
          % TODO: exit the playLoop too.
          exit(normal);
 
-      {FromNode, _Any}  ->
+      {FromNode, _Any, TurnCount, Score}  ->
          io:fwrite("~sReceived message [~p] from node ~w.~n",[?id, _Any, FromNode]),
          clientLoop()
    end.
@@ -202,15 +202,17 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
         "w"     -> io:fwrite("Moving west.~n");
         _       -> io:fwrite("That is not a direction.~n")
     end,
-    NewLocale = translateToLoc(mapper(CurrentLocale,NewDir)),
-    %io:fwrite("~s", [showMap(NewLocale)]),
+   NewLocale = translateToLoc(mapper(CurrentLocale,NewDir)),
     if (NewLocale == 3) ->
         % adds the 20 point bonus when location 3 is reached
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
     ?else ->
+      if (NewLocale == undefined) ->
+         playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList);
+      ?else ->
         % otherwise keeps decreasing score by 10 each move
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
-
+        end
     end,
     ok;
 
