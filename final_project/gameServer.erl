@@ -16,7 +16,9 @@
 
 start() ->
    % -- Spawn the server process.
-   io:fwrite("~sStarting Distributed Adventure Game Server (pid ~w) on node ~w.~nYou are on a road trip across the US when natural disasters break loose across all fifty states. Do your best to say safe.~n",[?id, self(), node()]),
+   % initial message
+   io:fwrite("~sStarting Distributed Adventure Game Server (pid ~w) on node ~w.~nYou are on a road trip across the US when natural disasters break loose across all fifty states. Do your best to say safe.~n
+(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!",[?id, self(), node()]),
     GameServerPid = spawn(fun() -> serverLoop([]) end),  % Provides an initial value for InventoryList
    io:fwrite("~sSpawned game server with pid ~w",[?id, GameServerPid]),
    % We want to publish this process in Erlang's local process registry.
@@ -80,7 +82,7 @@ serverLoop(InventoryList) ->
          serverLoop(InventoryList);
 
       {FromNode, NewLocale, TurnCount, Score, goToLocation, NewDir, NewInventoryList}  ->
-         io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode, NewDir]),
+         io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode,  unicode:characters_to_binary(NewDir)]),
          %Look up the Direction in our local process dictionary
          io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, translateToLoc(NewLocale)]),
          ClientLocNode = get(NewLocale),

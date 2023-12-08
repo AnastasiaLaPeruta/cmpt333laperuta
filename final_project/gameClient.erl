@@ -203,7 +203,7 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
         _       -> io:fwrite("That is not a direction.~n")
     end,
     NewLocale = translateToLoc(mapper(CurrentLocale,NewDir)),
-    io:fwrite("~s", [showMap(NewLocale)]),
+    %io:fwrite("~s", [showMap(NewLocale)]),
     if (NewLocale == 3) ->
         % adds the 20 point bonus when location 3 is reached
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
