@@ -121,18 +121,18 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
     Command = lists:sublist(Line, length(Line)-1),
     Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
     Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
-    NewLocale = mapper(CurrentLocale, string:strip(Noun)),
+    NewLoc = mapper(CurrentLocale, string:strip(Noun)),
     %
     % Quit or Recurse/Loop.
-    if (ResultAtom == quit orelse NewLocale == 6) ->
-        NewLocale = mapper(CurrentLocale, string:strip(Noun)),
-        io:fwrite("~s", [showMap(NewLocale)]),
+    if (ResultAtom == quit orelse NewLoc == 6) ->
+        NewLoc = mapper(CurrentLocale, string:strip(Noun)),
+        io:fwrite("~s", [showMap(NewLoc)]),
         io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
     ?else ->
         if not is_integer(ResultAtom) ->
-            io:fwrite("~s", [showMap(OriginalLocale)])
+            io:fwrite("~s", [showMap(NewLoc)])
         end,
-        playLoop(ServerNode, TurnCount+1, Score-10, NewLocale, InventoryList, OriginalLocale)
+        playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
     end.
 processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    % Do some elementary parsing of the line in two parts:
