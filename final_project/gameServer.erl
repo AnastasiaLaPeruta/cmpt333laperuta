@@ -82,7 +82,7 @@ serverLoop(InventoryList) ->
          serverLoop(InventoryList);
 
       {FromNode, NewLocale, TurnCount, Score, goToLocation, NewDir, NewInventoryList}  ->
-         io:fwrite("~sReceived goToLocation message from node ~w for direction [~w].~n",[?id, FromNode,  unicode:characters_to_binary(NewDir)]),
+         io:fwrite("~sReceived goToLocation message from node ~w for direction [~s].~n",[?id, FromNode, NewDir]),
          %Look up the Direction in our local process dictionary
          io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, translateToLoc(NewLocale)]),
          ClientLocNode = get(NewLocale),
