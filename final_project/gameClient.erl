@@ -150,27 +150,22 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
    end,
    Line = io:get_line(io_lib:format("~s[play] Enter action or help -] ", [?id])),  % Line is returned as a string.
    {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale),
-    %
-    % Update the display.
-    io:fwrite("~s~s~n", [?id, ResultText]),
-    Command = lists:sublist(Line, length(Line)-1),
-    Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
-    Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
-    NewLoc = mapper(CurrentLocale, string:strip(Noun)),
-    %
-    % Quit or Recurse/Loop.
-    if (ResultAtom == quit orelse NewLoc == 6) ->
-        NewLocale = mapper(CurrentLocale, string:strip(Noun)),
-        io:fwrite("~s", [showMap(NewLoc)]),
-        io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
-    ?else ->
-        if not is_integer(ResultAtom) ->
-            io:fwrite("~s", [showMap(CurrentLocale)]); % displays last location and not process atom for non-direction commands 
-        ?else ->
-            io:fwrite("~s", [showMap(NewLoc)])
-        end,
-        playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
-    end.
+   % Update the display.
+   io:fwrite("~s~s~n", [?id, ResultText]),
+   Command = lists:sublist(Line, length(Line)-1),
+   Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
+   Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
+   NewLoc = mapper(CurrentLocale, string:strip(Noun)),
+   % Quit or Recurse/Loop.
+   if (ResultAtom == quit orelse NewLoc == 6) ->
+      io:fwrite("~s", [showMap(NewLoc)]),
+      io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
+   ?else ->
+      io:fwrite("~s", [showMap(NewLoc)]),
+      playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
+   end.
+
+
 
 
 
