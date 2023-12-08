@@ -156,10 +156,10 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
     Command = lists:sublist(Line, length(Line)-1),
     Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
     Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
-    NewLocale = mapper(CurrentLocale, string:strip(Noun)),
     %
     % Quit or Recurse/Loop.
     if (ResultAtom == quit orelse NewLocale == 6) ->
+        NewLocale = mapper(CurrentLocale, string:strip(Noun)),
         io:fwrite("~s", [showMap(NewLocale)]),
         io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
     ?else ->
