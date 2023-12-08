@@ -141,7 +141,7 @@ mapper(_, _) -> -1.
 
 playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    % -- Get a line of input from the user.
-   io:fwrite("~s", [showMap(CurrentLocale)]),
+   showMap(CurrentLocale),
    % doesn't let score fall below 0
    if (Score >= 0) ->
       io:fwrite("~nScore=~w  Turn ~w ] ", [Score-20, TurnCount+1]);
@@ -161,11 +161,11 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
     % Quit or Recurse/Loop.
     if (ResultAtom == quit orelse NewLoc == 6) ->
         NewLocale = mapper(CurrentLocale, string:strip(Noun)),
-        io:fwrite("~s", [showMap(NewLocale)]),
+        io:fwrite("~s", [showMap(NewLoc)]),
         io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
     ?else ->
         if not is_integer(ResultAtom) ->
-            io:fwrite("~s", [showMap(OriginalLocale)])
+            io:fwrite("~s", [showMap(NewLoc)])
         end,
         playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
     end.
