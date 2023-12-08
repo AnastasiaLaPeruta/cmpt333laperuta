@@ -129,16 +129,17 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
         if 
          (NewLoc == 6) ->  
             io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
-         (ResultAtom == quit orelse ResultAtom == quit) ->
+         (ResultAtom == quit orelse ResultAtom == q) ->
             io:fwrite("~s Thank you for playing.~n", [?id]);
          ?else ->
-            playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
+            playLoop(ServerNode, TurnCount+1, Score-10, CurrentLocale, InventoryList, OriginalLocale)
          end;
     ?else ->
-        if not is_integer(ResultAtom) ->
-            io:fwrite("")
-        end,
-        playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale)
+        if Verb == "go"->
+            playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale);
+        ?else ->
+            playLoop(ServerNode, TurnCount+1, Score-10, CurrentLocale, InventoryList, OriginalLocale)
+        end
     end.
 processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
    % Do some elementary parsing of the line in two parts:
