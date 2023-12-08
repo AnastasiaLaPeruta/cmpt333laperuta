@@ -31,7 +31,7 @@ start(ServerNode) ->
    % Initialize server monitoring.
    gameClient ! {monitor, ServerNode},
    % -- Begin the play loop
-   playLoop(ServerNode, 0, 120, 0, [], 0).
+   playLoop(ServerNode, 0, 120, 0, []).
 %---------------------------------
 % Private, but accepting messages.
 %---------------------------------
@@ -104,7 +104,7 @@ mapper( 6, "north") -> 6;
 mapper( 6, "west") -> 6;
 mapper( 6, "east") -> 6;
 mapper(_, _) -> -1.
-playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
+playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    % -- Get a line of input from the user.
    io:fwrite("~s", [showMap(CurrentLocale)]),
    % doesn't let score fall below 0
@@ -114,7 +114,7 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
       io:fwrite("~nScore=~w  Turn ~w ] ", [0, TurnCount+1])
    end,
    Line = io:get_line(io_lib:format("~s[play] Enter action or help -] ", [?id])),  % Line is returned as a string.
-   {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale),
+   {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList),
     %
     % Update the display.
     io:fwrite("~s~s~n", [?id, ResultText]),
@@ -132,16 +132,16 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLoc
          (ResultAtom == quit orelse ResultAtom == q) ->
             io:fwrite("~s Thank you for playing.~n", [?id]);
          ?else ->
-            playLoop(ServerNode, TurnCount+1, Score-10, CurrentLocale, InventoryList, OriginalLocale)
+            playLoop(ServerNode, TurnCount+1, Score-10, CurrentLocale, InventoryList)
          end;
     ?else ->
         if Verb == "go"->
-            playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList, OriginalLocale);
+            playLoop(ServerNode, TurnCount+1, Score-10, NewLoc, InventoryList);
         ?else ->
-            playLoop(ServerNode, TurnCount+1, Score-10, CurrentLocale, InventoryList, OriginalLocale)
+            playLoop(ServerNode, TurnCount+1, Score-10, CurrentLocale, InventoryList)
         end
     end.
-processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
+processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    % Do some elementary parsing of the line in two parts:
    % 1. Remove the trailing newline charater.
    Command = lists:sublist(Line, length(Line)-1),  % (Because Line is a character list ending with a linefeed.)
@@ -155,7 +155,7 @@ processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList,
       "q"        -> {quit,   "Quitting."};
       "nodes"    -> {nodes,  listNodes()};
       "server"   -> {server, server(ServerNode)};
-      "go"       -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale)};
+      "go"       -> {go,     go(Noun, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)};
       "map"      -> {CurrentLocale, showMap(CurrentLocale)};
       "inventory"-> {CurrentLocale, showInventory(InventoryList)};
       % -- Otherwise...
@@ -175,7 +175,7 @@ server(ServerNode) ->
    ?else ->
       io_lib:format("Talking to game server on node ~w, which is NOT known to be in our cluster, and that may be a problem.", [ServerNode])
    end. % if
-go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale) ->
+go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    NewDir = string:strip(Direction),
     case NewDir of
         "north" -> io:fwrite("");
@@ -194,14 +194,14 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList, Origin
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
     ?else ->
       if (NewLocale == undefined), (not is_integer(NewLocale)) ->  % if input doesnt result in location on map or is invalid input
-         playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList, OriginalLocale);
+         playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList);
       ?else ->
         % otherwise keeps decreasing score by 10 each move
         {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
         end
     end,
     ok;
-go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList, _OriginalLocale) ->
+go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList) ->
    io_lib:format("Where do you want to go?", []).
 % Mapper. Decides location based on direction
 translateToLoc(0) -> loc0; 
