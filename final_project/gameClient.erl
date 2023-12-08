@@ -161,7 +161,8 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    %
    % -- Quit or Recurse/Loop.
    if (ResultAtom == quit orelse NewLocale == 6) ->
-      io:fwrite("~sThank you for playing.~n", [?id]);
+      io:fwrite("~s", [showMap(NewLocale)]),
+      io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
    ?else ->
      playLoop(ServerNode, TurnCount+1, Score-10, NewLocale, InventoryList)  % This is tail recursion, so it's really a jump to the top of playLoop.
    end. % if
