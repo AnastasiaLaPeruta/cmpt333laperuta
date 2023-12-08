@@ -91,9 +91,10 @@ serverLoop(InventoryList) ->
             {gameClient, FromNode} ! {node(), "You cannot go that way."};
          ?else ->
             io:fwrite("~sFound node in the local process dictionary: [~w].~n", [?id, ClientLocNode]),
-            {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."}
-            %Tell the NewDir on ClientLocNode that a gameClient on FromNode is entering.
-            %{NewDir, ClientLocNode} ! {self(), enter, FromNode}
+            {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."},
+            %Tell the ClientLocId on ClientLocNode that a gameClient on FromNode is entering.
+            ClientLocId = translateToLoc(NewLocale),
+            {ClientLocId, ClientLocNode} ! {node(), enter, FromNode}
          end, % if
          serverLoop(NewInventoryList);
    
@@ -126,7 +127,7 @@ translateToLoc(3) -> loc3;
 translateToLoc(4) -> loc4;
 translateToLoc(5)  -> loc5;
 translateToLoc(6)  -> loc6;
-translateToLoc(_) -> -1.
+translateToLoc(_) -> undefined.
 
 
 

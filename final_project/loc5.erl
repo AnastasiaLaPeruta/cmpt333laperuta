@@ -54,7 +54,7 @@ locationLoop() ->
       {nodedown, Node} ->
          % This location monitors the server node.
          % The server node has gone down. Notify the admin console...
-         io:fwrite("~sServer nodeS ~w has left our cluster and is no longer reachable. Shutting down.~n",[?id, Node]),
+         io:fwrite("~sServer node ~w has left our cluster and is no longer reachable. Shutting down.~n",[?id, Node]),
          % ...  and shut down.
          exit(normal);
 
@@ -65,7 +65,10 @@ locationLoop() ->
 
       {FromNode, _Any}  ->
          io:fwrite("~sReceived request [~p] from node ~w.~n",[?id, _Any, FromNode]),
-         locationLoop()
+         locationLoop();
+
+      AnyOther ->
+         io:fwrite("testing for receive")
    end.
 
 
