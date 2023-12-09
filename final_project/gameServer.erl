@@ -6,8 +6,6 @@
 -define(id, "-- game server: ").
 
 
--type direction() :: north | south | east | west.
-
 %--------
 % Public
 %--------
@@ -82,7 +80,7 @@ serverLoop(InventoryList) ->
          erase(hd(LocIdList)),            % erase it from our process dictionary.
          serverLoop(InventoryList);
 
-      {FromNode, NewLocale, TurnCount, Score, goToLocation, NewDir, NewInventoryList}  ->
+      {FromNode, NewLocale, goToLocation, NewDir, NewInventoryList}  ->
          io:fwrite("~sReceived goToLocation message from node ~w for direction [~s].~n",[?id, FromNode, NewDir]),
          %Look up the Direction in our local process dictionary
          io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, NewLocale]),
@@ -99,11 +97,6 @@ serverLoop(InventoryList) ->
             {ClientLocId, ClientLocNode} ! {node(), enter, FromNode}
          end, % if
          serverLoop(NewInventoryList);
-   
-
-      {FromNode, {Num, NewDir}} ->
-         io:fwrite("~sReceived move from node ~w for direction [~w].~n",[?id, FromNode, NewDir]),
-         serverLoop(InventoryList);
 
 
       {FromNode, _Any}  ->
@@ -118,20 +111,6 @@ serverLoop(InventoryList) ->
          io:fwrite("~sReceived unexpected message: ~p~n", [?id, AnyOther]),
          serverLoop(InventoryList)
    end.
-
-
-
-% Mapper. Decides location based on direction
-translateToLoc(0) -> loc0; 
-translateToLoc(1)  -> loc1;
-translateToLoc(2)  -> loc2;
-translateToLoc(3) -> loc3;
-translateToLoc(4) -> loc4;
-translateToLoc(5)  -> loc5;
-translateToLoc(6)  -> loc6;
-translateToLoc(_) -> undefined.
-
-
 
 
 %---------
@@ -176,7 +155,7 @@ helpText() ->
    io_lib:format("Commands: [help], [locations], [nodes], [quit]", []).
 
 listLocations() ->
-   % Send a messagfe to the local gameServer telling it to list the
+   % Send a message to the local gameServer telling it to list the
    % client locations it knows about. Since the gameServer is running
    % as a different process (becasue we spawned) its process dictionary
    % is seperate from ours and we cannot access it here. That's why

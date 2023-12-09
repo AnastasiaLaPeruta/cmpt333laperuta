@@ -4,7 +4,7 @@
 -define(else, true).  % -- This is to make the if statements (somewhat) readable.
 -define(id, "-- game client: ").
 -define(goToLocation, goToLocation).
--type direction() :: north | south | east | west.
+
 %--------
 % Public
 %--------
@@ -117,7 +117,7 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList),
     %
     % Update the display.
-    io:fwrite("~s~n", [?id, ResultText]),
+    io:fwrite("~s~s~n", [?id, ResultText]),
     Command = lists:sublist(Line, length(Line)-1),
     Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
     Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
@@ -194,14 +194,11 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
       playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList);
    ?else ->
       % otherwise keeps decreasing score by 10 each move
-      {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
-      end
+      {gameServer, ServerNode} ! {node(), NewLocale, goToLocation, NewDir, InventoryList}
    end,
-   ok;
+   ok.
 
 
-go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList) ->
-   io_lib:format("Where do you want to go?", []).
 % Mapper. Decides location based on direction
 translateToLoc(0) -> loc0; 
 translateToLoc(1)  -> loc1;
