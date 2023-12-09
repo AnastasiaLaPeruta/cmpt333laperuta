@@ -63,6 +63,7 @@ serverLoop(InventoryList) ->
 
       % Remote requests
 
+
       {FromNode, registerNewLocation, LocId, Inventory}  ->
          io:fwrite("~sReceived registerNewLocation message from node ~w for ~w.~n",[?id, FromNode, LocId]),
          % Record this clientLocation and node in our process dictionary.
@@ -87,7 +88,6 @@ serverLoop(InventoryList) ->
          io:fwrite("~sGetting node for location [~w] from the local process dictionary.~n", [?id, NewLocale]),
          ClientLocNode = get(NewLocale),
          if ClientLocNode == undefined ->
-            io:fwrite(ClientLocNode),
             io:fwrite("~sNode not found in the local process dictionary.~n", [?id]),
             %Use only FromPid here because we don't know the registered name of the process (because there is none).
             {gameClient, FromNode} ! {node(), "You cannot go that way."};
@@ -96,7 +96,7 @@ serverLoop(InventoryList) ->
             {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."},
             %Tell the ClientLocId on ClientLocNode that a gameClient on FromNode is entering.
             ClientLocId = NewLocale,
-            {ClientLocId, ClientLocNode} ! {node(), enter, FromNode, TurnCount, Score}
+            {ClientLocId, ClientLocNode} ! {node(), enter, FromNode}
          end, % if
          serverLoop(NewInventoryList);
    

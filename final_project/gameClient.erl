@@ -48,7 +48,7 @@ clientLoop() ->
          % ...  and shut down.
          % TODO: exit the playLoop too.
          exit(normal);
-      {FromNode, _Any, TurnCount, Score}  ->
+      {FromNode, _Any}  ->
          io:fwrite("~sReceived message [~p] from node ~w.~n",[?id, _Any, FromNode]),
          clientLoop()
    end.
@@ -161,8 +161,10 @@ processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)
       % -- Otherwise...
       _Else      -> {unknownCommand, "I do  not understand that command."}
    end.
+
 showInventory([])            -> io_lib:format("You are not carrying anything of use.", []);
 showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [lists:usort(InventoryList)]).
+
 helpText() ->
    io_lib:format("Commands: [help], [inventory], [map], [quit], [nodes], [server], [go <location>]", []).
 listNodes() ->
@@ -201,6 +203,8 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
         end
     end,
     ok;
+
+
 go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList) ->
    io_lib:format("Where do you want to go?", []).
 % Mapper. Decides location based on direction
@@ -212,3 +216,4 @@ translateToLoc(4) -> loc4;
 translateToLoc(5)  -> loc5;
 translateToLoc(6)  -> loc6;
 translateToLoc(_) -> undefined.
+
