@@ -1,0 +1,260 @@
+Transcript of Client:
+
+
+(client1@codespaces-19fa14)51> gameClient:start('server1@codespaces-19fa14').
+-- game client: Starting Distributed Adventure Game Client (pid <0.184.0>) on node 'client1@codespaces-19fa14'.
+-- game client: Spawned game client with pid <0.302.0>, registered as gameClient.
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- @ --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+-- game client: Monitoring game server on node 'server1@codespaces-19fa14'.
+
+Score=100  Turn 1 ] -- game client: [play] Enter action or help -] go west
+-- game client: ok
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. @ --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=90  Turn 2 ] -- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(1) Las Vegas, Nevada: You decide to take a break at the casino when the building begins to flood. You see [loose_change,keys] scattered around.">>] from node 'loc1@codespaces-19fa14'.
+-- game client: [play] Enter action or help -] go south
+-- game client: ok
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. @ --- 3 --- 4 .. 
+................... 
+
+Score=80  Turn 3 ] -- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(2) California: Usually sunny and clear skies, a wildfire creates clouds of smoke that cause low visibility. You see [water_bottle] scattered around.">>] from node 'loc2@codespaces-19fa14'.
+-- game client: [play] Enter action or help -] go east
+-- game client: ok
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+Score=70  Turn 4 ] -- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(3) Texas: Massive tornadoes rip through the state, each a mile wide and you must evacuate. You see [] scattered around.">>] from node 'loc3@codespaces-19fa14'.
+-- game client: [play] Enter action or help -] help
+-- game client: Commands: [help], [inventory], [map], [quit], [nodes], [server], [go <location>]
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+Score=60  Turn 5 ] -- game client: [play] Enter action or help -] inventory
+-- game client: Sorry. Nothing you could be carrying would be of any use against a natural disaster
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+Score=50  Turn 6 ] -- game client: [play] Enter action or help -] show map
+-- game client: I do  not understand that command.
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+Score=40  Turn 7 ] -- game client: [play] Enter action or help -] map
+-- game client: ................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+Score=30  Turn 8 ] -- game client: [play] Enter action or help -] nodes 
+-- game client: This node: 'client1@codespaces-19fa14'
+-- game client: Other nodes in our cluster: ['server1@codespaces-19fa14','location5@codespaces-19fa14','location0@codespaces-19fa14','loc1@codespaces-19fa14','loc2@codespaces-19fa14','loc3@codespaces-19fa14','loc4@codespaces-19fa14','loc6@codespaces-19fa14']
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+Score=20  Turn 9 ] -- game client: [play] Enter action or help -] server
+-- game client: Talking to game server on node 'server1@codespaces-19fa14', which is known to be in our cluster.
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- @ --- 4 .. 
+................... 
+
+Score=10  Turn 10 ] -- game client: [play] Enter action or help -] go east
+-- game client: ok
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- @ .. 
+................... 
+
+Score=0  Turn 11 ] -- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(4) Florida: You are in Miami where a tsunami threatens the coast. You see [swimsuit] scattered around.">>] from node 'loc4@codespaces-19fa14'.
+-- game client: [play] Enter action or help -] go east
+-- game client: ok
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- 5 .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- @ .. 
+................... 
+
+Score=-10  Turn 12 ] -- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(4) Florida: You are in Miami where a tsunami threatens the coast. You see [swimsuit] scattered around.">>] from node 'loc4@codespaces-19fa14'.
+-- game client: [play] Enter action or help -] go north
+-- game client: ok
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. 1 --- 0 --- @ .. 
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=-20  Turn 13 ] -- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(5) North Carolina: You are horseback riding in the Outer Banks while a hurricane is forming over the Atlantic Ocean. You see [compass] scattered around.">>] from node 'location5@codespaces-19fa14'.
+-- game client: [play] Enter action or help -] go north
+-- game client: ok
+-- game client:  Thank you for playing.
+ok
+-- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(6) Canadian Border: You successfully escaped to Canada. You see [] scattered around.">>] from node 'loc6@codespaces-19fa14'.
+(client1@codespaces-19fa14)52> 
+
+
+
+
+
+
+
+Transcript of Server:
+
+(server1@codespaces-19fa14)43> gameServer:start().
+-- game server: Starting Distributed Adventure Game Server (pid <0.84.0>) on node 'server1@codespaces-19fa14'.
+You are on a road trip across the US when natural disasters break loose across all fifty states. Do your best to say safe.
+
+(0) South Dakota: Home of Mount Rushmore. An earthquake is breaking loose the boulders of the monument. Better get out quick!-- game server: Spawned game server with pid <0.239.0>, registered as gameServer.
+-- game server: Received registerNewLocation message from node 'location5@codespaces-19fa14' for loc5.
+-- game server: Putting {loc5,'location5@codespaces-19fa14'} in the local process dictionary.
+-- game server: We are now monitoring 'location5@codespaces-19fa14'.
+-- game server: Received registerNewLocation message from node 'location0@codespaces-19fa14' for loc0.
+-- game server: Putting {loc0,'location0@codespaces-19fa14'} in the local process dictionary.
+-- game server: We are now monitoring 'location0@codespaces-19fa14'.
+-- game server: Received registerNewLocation message from node 'loc1@codespaces-19fa14' for loc1.
+-- game server: Putting {loc1,'loc1@codespaces-19fa14'} in the local process dictionary.
+-- game server: We are now monitoring 'loc1@codespaces-19fa14'.
+-- game server: Received registerNewLocation message from node 'loc2@codespaces-19fa14' for loc2.
+-- game server: Putting {loc2,'loc2@codespaces-19fa14'} in the local process dictionary.
+-- game server: We are now monitoring 'loc2@codespaces-19fa14'.
+-- game server: Received registerNewLocation message from node 'loc3@codespaces-19fa14' for loc3.
+-- game server: Putting {loc3,'loc3@codespaces-19fa14'} in the local process dictionary.
+-- game server: We are now monitoring 'loc3@codespaces-19fa14'.
+-- game server: Received registerNewLocation message from node 'loc4@codespaces-19fa14' for loc4.
+-- game server: Putting {loc4,'loc4@codespaces-19fa14'} in the local process dictionary.
+-- game server: We are now monitoring 'loc4@codespaces-19fa14'.
+-- game server: Received registerNewLocation message from node 'loc6@codespaces-19fa14' for loc6.
+-- game server: Putting {loc6,'loc6@codespaces-19fa14'} in the local process dictionary.
+-- game server: We are now monitoring 'loc6@codespaces-19fa14'.
+-- game server: Received goToLocation message from node 'client1@codespaces-19fa14' for direction [west].
+-- game server: Getting node for location [loc1] from the local process dictionary.
+-- game server: Found node in the local process dictionary: ['loc1@codespaces-19fa14'].
+-- game server: Received goToLocation message from node 'client1@codespaces-19fa14' for direction [south].
+-- game server: Getting node for location [loc2] from the local process dictionary.
+-- game server: Found node in the local process dictionary: ['loc2@codespaces-19fa14'].
+-- game server: Received goToLocation message from node 'client1@codespaces-19fa14' for direction [east].
+-- game server: Getting node for location [loc3] from the local process dictionary.
+-- game server: Found node in the local process dictionary: ['loc3@codespaces-19fa14'].
+-- game server: Received goToLocation message from node 'client1@codespaces-19fa14' for direction [east].
+-- game server: Getting node for location [loc4] from the local process dictionary.
+-- game server: Found node in the local process dictionary: ['loc4@codespaces-19fa14'].
+-- game server: Received goToLocation message from node 'client1@codespaces-19fa14' for direction [east].
+-- game server: Getting node for location [loc4] from the local process dictionary.
+-- game server: Found node in the local process dictionary: ['loc4@codespaces-19fa14'].
+-- game server: Received goToLocation message from node 'client1@codespaces-19fa14' for direction [north].
+-- game server: Getting node for location [loc5] from the local process dictionary.
+-- game server: Found node in the local process dictionary: ['location5@codespaces-19fa14'].
+-- game server: Received goToLocation message from node 'client1@codespaces-19fa14' for direction [north].
+-- game server: Getting node for location [loc6] from the local process dictionary.
+-- game server: Found node in the local process dictionary: ['loc6@codespaces-19fa14'].
+-- game server: [admin] Enter command or help -] help
+-- game server: Commands: [help], [locations], [nodes], [quit]
+-- game server: [admin] Enter command or help -] locations
+-- game server: ok
+-- game server: This server knows about the following (client) locations: [{loc6,'loc6@codespaces-19fa14'},{loc5,'location5@codespaces-19fa14'},{loc4,'loc4@codespaces-19fa14'},{loc3,'loc3@codespaces-19fa14'},{loc2,'loc2@codespaces-19fa14'},{loc1,'loc1@codespaces-19fa14'},{loc0,'location0@codespaces-19fa14'}]
+-- game server: [admin] Enter command or help -] nodes
+-- game server: ok
+-- game server: This node: 'server1@codespaces-19fa14'
+-- game server: Other nodes in our cluster: ['client1@codespaces-19fa14','location5@codespaces-19fa14','location0@codespaces-19fa14','loc1@codespaces-19fa14','loc2@codespaces-19fa14','loc3@codespaces-19fa14','loc4@codespaces-19fa14','loc6@codespaces-19fa14']
+-- game server: [admin] Enter command or help -] quit
+-- game server: Sending [quit] request...
+-- game server: This server processes is ending. Good bye.
+ok
+(server1@codespaces-19fa14)44> 
