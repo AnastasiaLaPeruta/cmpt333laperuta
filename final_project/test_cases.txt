@@ -1,0 +1,67 @@
+Test Cases: 
+
+
+Score=-20  Turn 13 ] -- game client: [play] Enter action or help -] __
+-- game client: I do  not understand that command.
+
+
+Score=0  Turn 14 ] -- game client: [play] Enter action or help -] go u
+That is not a direction.
+
+
+Score=-10  Turn 12 ] -- game client: [play] Enter action or help -] 9
+-- game client: I do  not understand that command.
+
+
+-- game server: [admin] Enter command or help -] 9 
+-- game server: I do not understand. Type help for options. 
+
+
+-- game server: [admin] Enter command or help -]  south
+-- game server: I do not understand. Type help for options. 
+
+
+
+Score=100  Turn 1 ] -- game client: [play] Enter action or help -] go west
+-- game client: ok
+-- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. @ --- 0 --- 5 ..  
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+-- game client: Received message [<<"(1) Las Vegas, Nevada: You decide to take a break at the casino when the building begins to flood. You see [loose_change,keys] scattered around.">>] from node 'loc1@codespaces-19fa14'.
+
+Score=90  Turn 2 ] -- game client: [play] Enter action or help -] go west
+-- game client: ok
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. @ --- 0 --- 5 ..  
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=80  Turn 3 ] -- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(1) Las Vegas, Nevada: You decide to take a break at the casino when the building begins to flood. You see [loose_change,keys] scattered around.">>] from node 'loc1@codespaces-19fa14'.
+-- game client: [play] Enter action or help -] go north
+-- game client: ok
+................... 
+.............. 6 .. 
+.............. | .. 
+.............. | .. 
+.. @ --- 0 --- 5 ..  
+.. |.... | ... | .. 
+.. |.... | ... | .. 
+.. 2 --- 3 --- 4 .. 
+................... 
+
+Score=70  Turn 4 ] -- game client: Received message [[]] from node 'server1@codespaces-19fa14'.
+-- game client: Received message [<<"(1) Las Vegas, Nevada: You decide to take a break at the casino when the building begins to flood. You see [loose_change,keys] scattered around.">>] from node 'loc1@codespaces-19fa14'.
+-- game client: [play] Enter action or help -] 
