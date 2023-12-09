@@ -91,7 +91,7 @@ serverLoop(InventoryList) ->
             {gameClient, FromNode} ! {node(), "You cannot go that way."};
          ?else ->
             io:fwrite("~sFound node in the local process dictionary: [~w].~n", [?id, ClientLocNode]),
-            {gameClient, FromNode} ! {node(), "[debug] You CAN go that way."},
+            {gameClient, FromNode} ! {node(), ""},
             %Tell the ClientLocId on ClientLocNode that a gameClient on FromNode is entering.
             ClientLocId = NewLocale,
             {ClientLocId, ClientLocNode} ! {node(), enter, FromNode}
@@ -148,7 +148,7 @@ processCommand(Command) ->
       "quit"      -> {quit, "Sending [quit] request..."};
       "q"         -> {quit, "Sending [quit] request..."};
       % -- Otherwise...
-      _Else  -> {unknownCommand, "I do not understand. Type help for options "}  % Starting _Else with "_" prevents the "unused" warning.
+      _Else  -> {unknownCommand, "I do not understand. Type help for options. "}  % Starting _Else with "_" prevents the "unused" warning.
    end.
 
 helpText() ->
