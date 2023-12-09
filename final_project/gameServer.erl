@@ -148,7 +148,7 @@ processCommand(Command) ->
       "quit"      -> {quit, "Sending [quit] request..."};
       "q"         -> {quit, "Sending [quit] request..."};
       % -- Otherwise...
-      _Else  -> {unknownCommand, "I'm sorry Dave, I do not understand."}  % Starting _Else with "_" prevents the "unused" warning.
+      _Else  -> {unknownCommand, "I do not understand. Type help for options "}  % Starting _Else with "_" prevents the "unused" warning.
    end.
 
 helpText() ->
