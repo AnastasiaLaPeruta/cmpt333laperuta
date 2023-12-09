@@ -127,9 +127,7 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
     if (ResultAtom == quit orelse ResultAtom == q orelse ResultAtom == help orelse NewLoc == 6 orelse ResultAtom == nodes orelse ResultAtom == server orelse ResultAtom == inventory orelse ResultAtom == map) ->
         NewLoc = mapper(CurrentLocale, string:strip(Noun)),
         if 
-         (NewLoc == 6) ->  
-            io:fwrite("~s (6) Canadian Border: You successfully escaped to Canada. Thank you for playing.~n", [?id]);
-         (ResultAtom == quit orelse ResultAtom == q) ->
+         (NewLoc == 6 orelse ResultAtom == quit orelse ResultAtom == q) ->
             io:fwrite("~s Thank you for playing.~n", [?id]);
          ?else ->
             playLoop(ServerNode, TurnCount+1, Score-10, CurrentLocale, InventoryList)
