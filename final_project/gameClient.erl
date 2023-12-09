@@ -117,7 +117,7 @@ playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
    {ResultAtom, ResultText} = processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList),
     %
     % Update the display.
-    io:fwrite("~s~s~n", [?id, ResultText]),
+    io:fwrite("~s~n", [?id, ResultText]),
     Command = lists:sublist(Line, length(Line)-1),
     Verb = lists:takewhile(fun(Element) -> Element /= 32 end, Command),
     Noun = lists:dropwhile(fun(Element) -> Element /= 32 end, Command),
@@ -162,9 +162,8 @@ processCommand(Line, ServerNode, TurnCount, Score, CurrentLocale, InventoryList)
       _Else      -> {unknownCommand, "I do  not understand that command."}
    end.
 
-showInventory([])            -> io_lib:format("You are not carrying anything of use.", []);
+showInventory([])            -> io_lib:format("Sorry. Nothing you could be carrying would be of any use against a natural disaster", []);
 showInventory(InventoryList) -> io_lib:format("You are carrying ~w.", [lists:usort(InventoryList)]).
-
 helpText() ->
    io_lib:format("Commands: [help], [inventory], [map], [quit], [nodes], [server], [go <location>]", []).
 listNodes() ->
@@ -191,18 +190,14 @@ go(Direction, ServerNode, TurnCount, Score, CurrentLocale, InventoryList) ->
         _       -> io:fwrite("That is not a direction.~n")
     end,
    NewLocale = translateToLoc(mapper(CurrentLocale,NewDir)),
-    if (NewLocale == 3) ->
-        % adds the 20 point bonus when location 3 is reached
-        {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score + 20, goToLocation, NewDir, InventoryList};
-    ?else ->
-      if (NewLocale == undefined), (not is_integer(NewLocale)) ->  % if input doesnt result in location on map or is invalid input
-         playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList);
-      ?else ->
-        % otherwise keeps decreasing score by 10 each move
-        {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
-        end
-    end,
-    ok;
+   if (NewLocale == undefined), (not is_integer(NewLocale)) ->  % if input doesnt result in location on map or is invalid input
+      playLoop(ServerNode, TurnCount, Score, CurrentLocale, InventoryList);
+   ?else ->
+      % otherwise keeps decreasing score by 10 each move
+      {gameServer, ServerNode} ! {node(), NewLocale, TurnCount + 1, Score - 10, goToLocation, NewDir, InventoryList}
+      end
+   end,
+   ok;
 
 
 go([], _ServerNode, _TurnCount, _Score, _CurrentLocale, _InventoryList) ->
